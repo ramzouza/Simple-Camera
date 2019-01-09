@@ -1,0 +1,6 @@
+language: bash
+services: 
+- docker
+
+script: 
+- echo "Hello"
