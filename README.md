@@ -1,5 +1,18 @@
-# Simple Camera
+# Simple Camera - SOEN 390 - [![Build Status](https://travis-ci.com/YannCedric/Simple-Camera.svg?branch=dev)](https://travis-ci.com/YannCedric/Simple-Camera)
 <img alt="Logo" src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="80" />
+
+##  Collaborators
+
+* **Ramez Zaid** - [Ramez Zaid](https://github.com/ramzouza) 
+* **William-Andrew Lussier**  -[William-Andrew Lussier](https://github.com/lussier115) 
+* **Skander Ben Mekki** - [Skander Ben Mekki](https://github.com/skanderbm123)
+* **Eric Kokmanian** - [Eric Kokmanian](https://github.com/EricKokmanian)
+* **Yanis Sibachir** - [Sibachir Ahmed-Yanis](https://github.com/yanis333)
+* **Jon Mongeau** - [Jonathan Mongeau](https://github.com/jonthemango)
+* **Ribal Aladeeb**  - [Ribal Aladeeb](https://github.com/ribal-aladeeb)
+* **Yann Cedric** - [Yann Cedric](https://github.com/YannCedric)
+
+##  App Description
 
 A camera with flash, zoom and no ads.
 
