@@ -4,3 +4,6 @@ services:
 
 script: 
 - echo "Hello"
+
+notifications:
+  slack: mini-capstone-konoha:0QohlfBAaXz34wuCg2SJMQZo
