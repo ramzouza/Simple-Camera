@@ -4,6 +4,9 @@ services:
 
 script: 
 - echo "Hello"
+- ./gradlew -v
+- ./gradlew build
+- ./gradlew test
 
 notifications:
   slack: mini-capstone-konoha:0QohlfBAaXz34wuCg2SJMQZo
