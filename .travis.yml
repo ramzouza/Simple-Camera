@@ -9,7 +9,6 @@ android:
 script: 
 - echo "Hello"
 - ./gradlew -v
-- ./gradlew build
 - ./gradlew test
 
 notifications:
