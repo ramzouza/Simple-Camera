@@ -1,6 +1,8 @@
-language: bash
-services: 
-- docker
+language: java
+
+jdk:
+  - openjdk7
+  - oraclejdk7
 
 script: 
 - echo "Hello"
