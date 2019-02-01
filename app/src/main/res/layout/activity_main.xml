@@ -41,9 +41,17 @@
         android:id="@+id/last_photo_video_preview"
         android:layout_width="@dimen/icon_size"
         android:layout_height="@dimen/icon_size"
-        android:layout_below="@+id/change_resolution"
+        android:layout_below="@+id/advanced_camera"
         android:layout_alignParentRight="true"
         android:padding="@dimen/medium_margin"/>
+
+    <ImageView
+        android:id="@+id/advanced_camera"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:layout_below="@+id/change_resolution"
+        android:layout_alignParentRight="true"
+        android:padding="@dimen/medium_margin" />
 
     <LinearLayout
         android:id="@+id/btn_holder"

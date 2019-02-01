@@ -9,6 +9,7 @@ import android.os.Handler
 import android.provider.MediaStore
 import android.view.*
 import android.widget.RelativeLayout
+import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -26,6 +27,7 @@ import com.simplemobiletools.commons.extensions.*
 import com.simplemobiletools.commons.helpers.*
 import com.simplemobiletools.commons.models.Release
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.dialog_change_resolution.view.*
 
 class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     private val FADE_DELAY = 5000L
@@ -146,6 +148,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         toggle_photo_video.beGone()
         settings.beGone()
         last_photo_video_preview.beGone()
+        advanced_camera.beGone()
     }
 
     private fun tryInitCamera() {
@@ -212,11 +215,14 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         val initialFlashlightState = if (config.turnFlashOffAtStartup) FLASH_OFF else config.flashlightState
         mPreview!!.setFlashlightState(initialFlashlightState)
         updateFlashlightState(initialFlashlightState)
+
+        updateLensIcon() // This will set the icon button to the correct icon when camera is initilized
     }
 
     private fun initButtons() {
         toggle_camera.setOnClickListener { toggleCamera() }
         last_photo_video_preview.setOnClickListener { showLastMediaPreview() }
+        advanced_camera.setOnClickListener { toggleLens() }
         toggle_flash.setOnClickListener { toggleFlash() }
         shutter.setOnClickListener { shutterPressed() }
         settings.setOnClickListener { launchSettings() }
@@ -228,6 +234,19 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         if (checkCameraAvailable()) {
             mPreview!!.toggleFrontBackCamera()
         }
+    }
+
+    private fun toggleLens() {
+        /*
+        When button is clicked toggleLens is called. For have I have it turning out the flashlight.
+         */
+        if (checkCameraAvailable()) {
+            mPreview?.toggleFlashlight()
+        }
+
+        this.toast("Advanced Hub")
+
+
     }
 
     private fun showLastMediaPreview() {
@@ -251,6 +270,14 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
             else -> R.drawable.ic_flash_auto
         }
         toggle_flash.setImageResource(flashDrawable)
+    }
+
+    fun updateLensIcon(){
+        /*
+        updateLensIcon will update the icon of the advanced view with the correct icon, change the R.drawable.* to
+        have the icon you wish to change it to.
+         */
+        advanced_camera.setImageResource(R.drawable.ic_filter)
     }
 
     fun updateCameraIcon(isUsingFrontCamera: Boolean) {
@@ -336,6 +363,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     private fun initPhotoMode() {
         toggle_photo_video.setImageResource(R.drawable.ic_video)
         shutter.setImageResource(R.drawable.ic_shutter)
+
         mPreview?.initPhotoMode()
         setupPreviewImage(true)
     }
@@ -395,6 +423,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         fadeAnim(toggle_photo_video, .0f)
         fadeAnim(change_resolution, .0f)
         fadeAnim(last_photo_video_preview, .0f)
+        fadeAnim(advanced_camera, .0f)
     }
 
     private fun fadeInButtons() {
@@ -402,6 +431,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         fadeAnim(toggle_photo_video, 1f)
         fadeAnim(change_resolution, 1f)
         fadeAnim(last_photo_video_preview, 1f)
+        fadeAnim(advanced_camera, 1f)
         scheduleFadeOut()
     }
 
@@ -479,7 +509,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     }
 
     private fun animateViews(degrees: Int) {
-        val views = arrayOf<View>(toggle_camera, toggle_flash, toggle_photo_video, change_resolution, shutter, settings, last_photo_video_preview)
+        val views = arrayOf<View>(toggle_camera, toggle_flash, toggle_photo_video, change_resolution, shutter, settings, last_photo_video_preview, advanced_camera)
         for (view in views) {
             rotate(view, degrees)
         }
