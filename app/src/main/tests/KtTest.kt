@@ -1,7 +1,8 @@
 import org.junit.*
+import org.junit.Assert
 
 class KtUnitTests() {
     @Test fun ktTestBasic () {
-        assert(true)
+        Assert.assertTrue(true)
     }
 }

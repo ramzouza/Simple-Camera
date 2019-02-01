@@ -1,8 +1,9 @@
 import org.junit.*;
+import org.junit.Assert;
 
 public class UnitTests {
     @Test
     public void testBasic(){
-        assert(true);
+        Assert.assertTrue(true);
     }
 }
