@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "300180738953",
+    "firebase_url": "https://simple-camera-30b2e.firebaseio.com",
+    "project_id": "simple-camera-30b2e",
+    "storage_bucket": "simple-camera-30b2e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:300180738953:android:cea210d36a3ce314",
+        "android_client_info": {
+          "package_name": "com.simplemobiletools.camera"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "300180738953-jhu8okcrrlm11220nbklfa7oc9rh9e6u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6z6yNsWCYxhWSiHwTK3_AgXaWoVz2lf0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
