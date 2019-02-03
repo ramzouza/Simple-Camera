@@ -48,6 +48,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     private var mIsHardwareShutterHandled = false
     private var mCurrVideoRecTimer = 0
     var mLastHandledOrientation = 0
+    private var lensMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
@@ -219,6 +220,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         updateFlashlightState(initialFlashlightState)
 
         updateLensIcon() // This will set the icon button to the correct icon when camera is initilized
+        fadeAnim(advanced_hub, .0f)
     }
 
     private fun initButtons() {
@@ -230,6 +232,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         settings.setOnClickListener { launchSettings() }
         toggle_photo_video.setOnClickListener { handleTogglePhotoVideo() }
         change_resolution.setOnClickListener { mPreview?.showChangeResolutionDialog() }
+        qr_code.setOnClickListener { qr_code() }
     }
 
     private fun toggleCamera() {
@@ -242,13 +245,39 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         /*
         When button is clicked toggleLens is called. For have I have it turning out the flashlight.
          */
-        if (checkCameraAvailable()) {
-            mPreview?.toggleFlashlight()
+        //this.toast("Advanced Mode")
+
+        this.lensMode = !this.lensMode
+
+        if (this.lensMode){ // We're in lens mode now
+            fadeAnim(btn_holder, .0f)
+            fadeAnim(advanced_hub, 1f)
+            // make bottom bar go away
+            // make advanced hub appear
+        } else { // we're in camera mode now
+            fadeAnim(btn_holder, 1f)
+            fadeAnim(advanced_hub, .0f)
+            // make advanced hub appear
+            // make bottom bar appear
         }
 
-        this.toast("Advanced Hub")
+        //qr_code()
 
+    }
 
+    private fun qr_code(){
+        toggleBottomButtons(true)
+        handleShutter()
+        this.toast(getLastMediaPath())
+
+    }
+
+    private fun getLastMediaPath() : String {
+        if (mPreviewUri != null) {
+            val path = applicationContext.getRealPathFromURI(mPreviewUri!!) ?: mPreviewUri!!.toString()
+            return path
+        }
+        return ""
     }
 
     private fun showLastMediaPreview() {

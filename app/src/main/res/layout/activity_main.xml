@@ -82,6 +82,23 @@
             android:layout_weight="1"
             android:padding="@dimen/normal_margin"
             android:src="@drawable/ic_flash_off"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/advanced_hub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|bottom"
+        android:layout_above="@+id/btn_holder">
+
+    <ImageView
+            android:id="@+id/qr_code"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:layout_weight="1"
+            android:padding="@dimen/normal_margin"
+            android:src="@drawable/ic_qr_code"/>
 
     </LinearLayout>
 
