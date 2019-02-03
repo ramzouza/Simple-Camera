@@ -9,6 +9,8 @@ import android.os.Handler
 import android.provider.MediaStore
 import android.view.*
 import android.widget.RelativeLayout
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -253,6 +255,11 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         if (mPreviewUri != null) {
             val path = applicationContext.getRealPathFromURI(mPreviewUri!!) ?: mPreviewUri!!.toString()
             openPathIntent(path, false, BuildConfig.APPLICATION_ID)
+            this.toast(path)
+            val bMap : Bitmap= BitmapFactory.decodeFile(path)
+            this.toast(bMap.toString())
+
+
         }
     }
 
