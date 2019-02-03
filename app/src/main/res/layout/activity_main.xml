@@ -150,6 +150,7 @@
             android:padding="@dimen/normal_margin"
             android:src="@drawable/ic_flash_off" />
 
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/advanced_hub"

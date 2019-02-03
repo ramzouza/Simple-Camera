@@ -248,23 +248,25 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         When button is clicked toggleLens is called. For have I have it turning out the flashlight.
          */
         //this.toast("Advanced Mode")
+        findViewById<HorizontalScrollView>(R.id.smart_hub_scroll).setVisibility(View.VISIBLE);
 
-        this.lensMode = !this.lensMode
+        /*
+           this.lensMode = !this.lensMode
 
-        if (this.lensMode){ // We're in lens mode now
-            fadeAnim(btn_holder, .0f)
-            fadeAnim(advanced_hub, 1f)
-            // make bottom bar go away
-            // make advanced hub appear
-            findViewById<HorizontalScrollView>(R.id.smart_hub_scroll).setVisibility(View.VISIBLE);
-        } else { // we're in camera mode now
-            fadeAnim(btn_holder, 1f)
-            fadeAnim(advanced_hub, .0f)
-            // make advanced hub appear
-            // make bottom bar appear
+           if (this.lensMode){ // We're in lens mode now
+               fadeAnim(btn_holder, .0f)
+               fadeAnim(advanced_hub, 1f)
+               // make bottom bar go away
+               // make advanced hub appear
 
-        }
+           } else { // we're in camera mode now
+               fadeAnim(btn_holder, 1f)
+               fadeAnim(advanced_hub, .0f)
+               // make advanced hub appear
+               // make bottom bar appear
 
+           }
+   */
         //qr_code()
 
     }
