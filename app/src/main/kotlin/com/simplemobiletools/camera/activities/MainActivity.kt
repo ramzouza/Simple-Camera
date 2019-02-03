@@ -222,7 +222,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         updateFlashlightState(initialFlashlightState)
 
         updateLensIcon() // This will set the icon button to the correct icon when camera is initilized
-        fadeAnim(advanced_hub, .0f)
+        fadeAnim(smart_hub_scroll, .0f)
     }
 
     private fun initButtons() {
@@ -250,24 +250,23 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         //this.toast("Advanced Mode")
         findViewById<HorizontalScrollView>(R.id.smart_hub_scroll).setVisibility(View.VISIBLE);
 
-        /*
+
            this.lensMode = !this.lensMode
 
            if (this.lensMode){ // We're in lens mode now
                fadeAnim(btn_holder, .0f)
-               fadeAnim(advanced_hub, 1f)
+               fadeAnim(smart_hub_scroll, 1f)
                // make bottom bar go away
                // make advanced hub appear
 
            } else { // we're in camera mode now
                fadeAnim(btn_holder, 1f)
-               fadeAnim(advanced_hub, .0f)
+               fadeAnim(smart_hub_scroll, .0f)
                // make advanced hub appear
                // make bottom bar appear
 
            }
-   */
-        //qr_code()
+
 
     }
 
