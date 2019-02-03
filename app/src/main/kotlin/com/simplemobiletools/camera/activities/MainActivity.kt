@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
 import android.view.*
+import android.widget.HorizontalScrollView
 import android.widget.RelativeLayout
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -255,11 +256,13 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
             fadeAnim(advanced_hub, 1f)
             // make bottom bar go away
             // make advanced hub appear
+            findViewById<HorizontalScrollView>(R.id.smart_hub_scroll).setVisibility(View.VISIBLE);
         } else { // we're in camera mode now
             fadeAnim(btn_holder, 1f)
             fadeAnim(advanced_hub, .0f)
             // make advanced hub appear
             // make bottom bar appear
+
         }
 
         //qr_code()
