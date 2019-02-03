@@ -30,6 +30,7 @@ import com.simplemobiletools.commons.helpers.*
 import com.simplemobiletools.commons.models.Release
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_change_resolution.view.*
+import com.simplemobiletools.camera.firebase.BarcodeHandler
 
 class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     private val FADE_DELAY = 5000L
@@ -286,7 +287,8 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
             openPathIntent(path, false, BuildConfig.APPLICATION_ID)
             this.toast(path)
             val bMap : Bitmap= BitmapFactory.decodeFile(path)
-            this.toast(bMap.toString())
+            //this.toast(bMap)
+            val temp =BarcodeHandler.initBarcodeHandler(bMap)
 
 
         }
