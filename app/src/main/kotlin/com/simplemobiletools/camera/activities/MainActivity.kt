@@ -12,6 +12,7 @@ import android.widget.HorizontalScrollView
 import android.widget.RelativeLayout
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -244,11 +245,11 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     }
 
     private fun toggleLens() {
-        /*
-        When button is clicked toggleLens is called. For have I have it turning out the flashlight.
-         */
+
         //this.toast("Advanced Mode")
         findViewById<HorizontalScrollView>(R.id.smart_hub_scroll).setVisibility(View.VISIBLE);
+
+        findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.GONE);
 
 
            this.lensMode = !this.lensMode
@@ -262,6 +263,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
            } else { // we're in camera mode now
                fadeAnim(btn_holder, 1f)
                fadeAnim(smart_hub_scroll, .0f)
+               findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.VISIBLE);
                // make advanced hub appear
                // make bottom bar appear
 

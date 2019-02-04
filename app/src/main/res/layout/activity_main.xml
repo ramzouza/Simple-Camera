@@ -56,15 +56,18 @@
         android:id="@+id/smart_hub_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_above="@+id/btn_holder">
+        android:layout_above="@+id/btn_holder"
+        android:layout_alignParentBottom="true"
+        android:fillViewport="false"
+        android:gravity="center_horizontal|bottom"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/smart_hub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="69dp"
+        
             android:orientation="horizontal">
 
             <ImageView
