@@ -321,7 +321,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         updateLensIcon will update the icon of the advanced view with the correct icon, change the R.drawable.* to
         have the icon you wish to change it to.
          */
-        advanced_camera.setImageResource(R.drawable.ic_filter)
+        advanced_camera.setImageResource(R.drawable.ic_smart_lens)
     }
 
     fun updateCameraIcon(isUsingFrontCamera: Boolean) {

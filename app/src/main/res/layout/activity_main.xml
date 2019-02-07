@@ -50,7 +50,8 @@
         android:layout_height="@dimen/icon_size"
         android:layout_below="@+id/change_resolution"
         android:layout_alignParentRight="true"
-        android:padding="@dimen/medium_margin" />
+        android:padding="@dimen/medium_margin"
+        android:src="@drawable/ic_smart_lens" />
 
     <HorizontalScrollView
         android:id="@+id/smart_hub_scroll"
