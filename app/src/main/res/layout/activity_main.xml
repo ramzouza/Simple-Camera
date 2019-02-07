@@ -94,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="@dimen/normal_margin"
-                android:src="@drawable/ic_flash_off" />
+                android:src="@drawable/ic_plus" />
 
             <ImageView
                 android:id="@+id/Futur_feature4"
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="@dimen/normal_margin"
-                android:src="@drawable/ic_flash_off" />
+                android:src="@drawable/ic_plus" />
 
             <ImageView
                 android:id="@+id/Futur_feature5"
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="@dimen/normal_margin"
-                android:src="@drawable/ic_flash_off" />
+                android:src="@drawable/ic_plus" />
 
             <ImageView
                 android:id="@+id/Futur_feature6"
@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="@dimen/normal_margin"
-                android:src="@drawable/ic_flash_off" />
+                android:src="@drawable/ic_plus" />
 
         </LinearLayout>
     </HorizontalScrollView>
