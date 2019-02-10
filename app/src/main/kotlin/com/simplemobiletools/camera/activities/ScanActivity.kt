@@ -3,6 +3,10 @@ package com.simplemobiletools.camera.activities
 import android.os.Bundle
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import android.widget.Button
+import kotlinx.android.synthetic.main.activity_main.view.*
+import com.simplemobiletools.camera.R
+import kotlinx.android.synthetic.main.activity_main.*
 
 class ScanActivity : SimpleActivity(), ZXingScannerView.ResultHandler{
     private var mScannerView: ZXingScannerView? = null
@@ -29,7 +33,14 @@ class ScanActivity : SimpleActivity(), ZXingScannerView.ResultHandler{
         // Log.v("tag", rawResult.getText()); // Prints scan results
         // Log.v("tag", rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
 
+
+        println(smart_notif)
+
+        println("Result")
         println(rawResult.text)
+
+        smart_notif.setText(rawResult.text)
+
         // If you would like to resume scanning, call this method below:
         //mScannerView.resumeCameraPreview(this);
     }

@@ -128,6 +128,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         mLastHandledOrientation = 0
         mCameraImpl = MyCameraImpl(applicationContext)
 
+
         if (config.alwaysOpenBackCamera) {
             config.lastUsedCamera = mCameraImpl.getBackCameraId().toString()
         }
@@ -231,6 +232,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     }
 
     private fun initButtons() {
+
         toggle_camera.setOnClickListener { toggleCamera() }
         last_photo_video_preview.setOnClickListener { showLastMediaPreview() }
         advanced_camera.setOnClickListener { toggleLens() }
