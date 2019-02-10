@@ -94,6 +94,11 @@
             android:label="@string/settings"
             android:parentActivityName=".activities.MainActivity"/>
 
+        <activity
+            android:name=".activities.ScanActivity"
+            android:label="Scan"
+            android:parentActivityName=".activities.MainActivity"/>
+
         <receiver
             android:name=".receivers.HardwareShutterReceiver">
             <intent-filter>

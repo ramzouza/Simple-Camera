@@ -13,6 +13,10 @@ import android.widget.RelativeLayout
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.LinearLayout
+//import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -235,7 +239,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         settings.setOnClickListener { launchSettings() }
         toggle_photo_video.setOnClickListener { handleTogglePhotoVideo() }
         change_resolution.setOnClickListener { mPreview?.showChangeResolutionDialog() }
-        qr_code.setOnClickListener { qr_code() }
+        qr_code!!.setOnClickListener { qr_code() }
     }
 
     private fun toggleCamera() {
@@ -273,9 +277,12 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     }
 
     private fun qr_code(){
-        toggleBottomButtons(true)
-        handleShutter()
-        this.toast(getLastMediaPath())
+//        toggleBottomButtons(true)
+//        handleShutter()
+//        this.toast(getLastMediaPath())
+
+        val intent = Intent(applicationContext, ScanActivity::class.java)
+        startActivity(intent)
 
     }
 
@@ -292,9 +299,8 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
             val path = applicationContext.getRealPathFromURI(mPreviewUri!!) ?: mPreviewUri!!.toString()
             openPathIntent(path, false, BuildConfig.APPLICATION_ID)
             this.toast(path)
-            val bMap : Bitmap= BitmapFactory.decodeFile(path)
-            //this.toast(bMap)
-            val temp =BarcodeHandler.initBarcodeHandler(bMap)
+           //this.toast(bMap)
+//            val temp =BarcodeHandler.initBarcodeHandler(getApplicationContext(),path)
 
 
         }
