@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.os.Vibrator
 import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -257,6 +258,11 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
 
         findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.GONE);
 
+
+
+        val vibrator = this.getSystemService(VIBRATOR_SERVICE) as Vibrator
+
+        vibrator.vibrate(400);
 
            this.lensMode = !this.lensMode
 

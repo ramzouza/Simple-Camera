@@ -49,8 +49,6 @@ dependencies {
     compile "org.mockito:mockito-core:1.+"
     compile 'me.dm7.barcodescanner:zxing:1.9'
 
-
-
 }
 
 Properties props = new Properties()
