@@ -6,24 +6,6 @@
     android:background="@android:color/black">
 
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn"
-            android:text="Scan Barcode or QR code" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvresult"
-            android:textColor="#000"
-            android:layout_marginTop="10dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Result will be here"/>
-
-
-
-
-
     <com.simplemobiletools.camera.views.AutoFitTextureView
         android:id="@+id/camera_texture_view"
         android:layout_width="wrap_content"
@@ -184,14 +166,5 @@
         android:text="00:00"
         android:textColor="@android:color/white"
         android:visibility="gone" />
-
-    <Button
-        android:id="@+id/smart_notif"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_holder"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="46dp"
-        android:text="Click here" />
 
 </RelativeLayout>
