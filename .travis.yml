@@ -1,0 +1,13 @@
+language: android
+android:
+  components:
+    - platform-tools
+    - tools
+    - build-tools-28.0.3
+    - android-28
+
+script: 
+- ./gradlew test
+
+notifications:
+  slack: mini-capstone-konoha:0QohlfBAaXz34wuCg2SJMQZo

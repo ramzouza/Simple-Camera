@@ -32,6 +32,7 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/main/tests'
     }
 
     lintOptions {
@@ -42,6 +43,12 @@ android {
 
 dependencies {
     implementation 'com.simplemobiletools:commons:5.1.4'
+    implementation 'com.google.firebase:firebase-core:16.0.6'
+    implementation 'com.google.firebase:firebase-ml-vision:18.0.2'
+    compile "junit:junit:4.11"
+    compile "org.mockito:mockito-core:1.+"
+    compile 'me.dm7.barcodescanner:zxing:1.9'
+
 }
 
 Properties props = new Properties()
@@ -62,3 +69,5 @@ if (propFile.canRead()) {
     println 'signing.properties not found'
     android.buildTypes.release.signingConfig = null
 }
+
+apply plugin: 'com.google.gms.google-services'

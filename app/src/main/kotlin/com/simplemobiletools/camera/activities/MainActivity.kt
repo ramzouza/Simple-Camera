@@ -8,7 +8,17 @@ import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
 import android.view.*
+import android.widget.HorizontalScrollView
 import android.widget.RelativeLayout
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.widget.LinearLayout
+//import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import android.os.Vibrator
+import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -26,6 +36,8 @@ import com.simplemobiletools.commons.extensions.*
 import com.simplemobiletools.commons.helpers.*
 import com.simplemobiletools.commons.models.Release
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.dialog_change_resolution.view.*
+import com.simplemobiletools.camera.firebase.BarcodeHandler
 
 class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     private val FADE_DELAY = 5000L
@@ -44,6 +56,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     private var mIsHardwareShutterHandled = false
     private var mCurrVideoRecTimer = 0
     var mLastHandledOrientation = 0
+    private var lensMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
@@ -116,6 +129,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         mLastHandledOrientation = 0
         mCameraImpl = MyCameraImpl(applicationContext)
 
+
         if (config.alwaysOpenBackCamera) {
             config.lastUsedCamera = mCameraImpl.getBackCameraId().toString()
         }
@@ -146,6 +160,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         toggle_photo_video.beGone()
         settings.beGone()
         last_photo_video_preview.beGone()
+        advanced_camera.beGone()
     }
 
     private fun tryInitCamera() {
@@ -212,16 +227,22 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         val initialFlashlightState = if (config.turnFlashOffAtStartup) FLASH_OFF else config.flashlightState
         mPreview!!.setFlashlightState(initialFlashlightState)
         updateFlashlightState(initialFlashlightState)
+
+        updateLensIcon() // This will set the icon button to the correct icon when camera is initilized
+        fadeAnim(smart_hub_scroll, .0f)
     }
 
     private fun initButtons() {
+
         toggle_camera.setOnClickListener { toggleCamera() }
         last_photo_video_preview.setOnClickListener { showLastMediaPreview() }
+        advanced_camera.setOnClickListener { toggleLens() }
         toggle_flash.setOnClickListener { toggleFlash() }
         shutter.setOnClickListener { shutterPressed() }
         settings.setOnClickListener { launchSettings() }
         toggle_photo_video.setOnClickListener { handleTogglePhotoVideo() }
         change_resolution.setOnClickListener { mPreview?.showChangeResolutionDialog() }
+        qr_code!!.setOnClickListener { qr_code() }
     }
 
     private fun toggleCamera() {
@@ -230,10 +251,66 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         }
     }
 
+    private fun toggleLens() {
+
+        //this.toast("Advanced Mode")
+        findViewById<HorizontalScrollView>(R.id.smart_hub_scroll).setVisibility(View.VISIBLE);
+
+        findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.GONE);
+
+
+
+        val vibrator = this.getSystemService(VIBRATOR_SERVICE) as Vibrator
+
+        vibrator.vibrate(400);
+
+           this.lensMode = !this.lensMode
+
+           if (this.lensMode){ // We're in lens mode now
+               fadeAnim(btn_holder, .0f)
+               fadeAnim(smart_hub_scroll, 1f)
+               // make bottom bar go away
+               // make advanced hub appear
+
+           } else { // we're in camera mode now
+               fadeAnim(btn_holder, 1f)
+               fadeAnim(smart_hub_scroll, .0f)
+               findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.VISIBLE);
+               // make advanced hub appear
+               // make bottom bar appear
+
+           }
+
+
+    }
+
+    private fun qr_code(){
+//        toggleBottomButtons(true)
+//        handleShutter()
+//        this.toast(getLastMediaPath())
+
+        val intent = Intent(applicationContext, ScanActivity::class.java)
+        startActivity(intent)
+
+    }
+
+    private fun getLastMediaPath() : String {
+        if (mPreviewUri != null) {
+            val path = applicationContext.getRealPathFromURI(mPreviewUri!!) ?: mPreviewUri!!.toString()
+            return path
+        }
+        return ""
+    }
+
     private fun showLastMediaPreview() {
         if (mPreviewUri != null) {
             val path = applicationContext.getRealPathFromURI(mPreviewUri!!) ?: mPreviewUri!!.toString()
             openPathIntent(path, false, BuildConfig.APPLICATION_ID)
+            this.toast(path)
+           //this.toast(bMap)
+//            val temp =BarcodeHandler.initBarcodeHandler(getApplicationContext(),path)
+
+
         }
     }
 
@@ -251,6 +328,14 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
             else -> R.drawable.ic_flash_auto
         }
         toggle_flash.setImageResource(flashDrawable)
+    }
+
+    fun updateLensIcon(){
+        /*
+        updateLensIcon will update the icon of the advanced view with the correct icon, change the R.drawable.* to
+        have the icon you wish to change it to.
+         */
+        advanced_camera.setImageResource(R.drawable.ic_smart_lens)
     }
 
     fun updateCameraIcon(isUsingFrontCamera: Boolean) {
@@ -336,6 +421,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     private fun initPhotoMode() {
         toggle_photo_video.setImageResource(R.drawable.ic_video)
         shutter.setImageResource(R.drawable.ic_shutter)
+
         mPreview?.initPhotoMode()
         setupPreviewImage(true)
     }
@@ -395,6 +481,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         fadeAnim(toggle_photo_video, .0f)
         fadeAnim(change_resolution, .0f)
         fadeAnim(last_photo_video_preview, .0f)
+        fadeAnim(advanced_camera, .0f)
     }
 
     private fun fadeInButtons() {
@@ -402,6 +489,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         fadeAnim(toggle_photo_video, 1f)
         fadeAnim(change_resolution, 1f)
         fadeAnim(last_photo_video_preview, 1f)
+        fadeAnim(advanced_camera, 1f)
         scheduleFadeOut()
     }
 
@@ -479,7 +567,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     }
 
     private fun animateViews(degrees: Int) {
-        val views = arrayOf<View>(toggle_camera, toggle_flash, toggle_photo_video, change_resolution, shutter, settings, last_photo_video_preview)
+        val views = arrayOf<View>(toggle_camera, toggle_flash, toggle_photo_video, change_resolution, shutter, settings, last_photo_video_preview, advanced_camera)
         for (view in views) {
             rotate(view, degrees)
         }
