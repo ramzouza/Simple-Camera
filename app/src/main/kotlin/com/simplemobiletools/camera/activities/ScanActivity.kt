@@ -47,34 +47,25 @@ class ScanActivity : SimpleActivity(), ZXingScannerView.ResultHandler{
     }
 
     override fun handleResult(rawResult: Result) {
-        // Do something with the result here
-        // Log.v("tag", rawResult.getText()); // Prints scan results
-        // Log.v("tag", rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
-//
-//        var view = LayoutInflater.from().inflate(R.layout.activity_main, null)
-//        var button = view.findViewById<Button>(R.id.smart_notif)
-//
-//
-//        println("Result")
-//        println(button)
-//        println(rawResult.text)
-//
-//
-//        button.text = rawResult.text
-//
-//        println("Done")
-
         // build alert dialog
         val dialogBuilder = AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
 
+        handleResultController(rawResult.text, dialogBuilder);
+        // If you would like to resume scanning, call this method below:
+//         mScannerView!!.resumeCameraPreview(this);
+    }
+
+    fun handleResultController(result : String, dialogBuilder : AlertDialog.Builder){
+
         // set message of alert dialog
-        dialogBuilder.setTitle("Link Found")
-                .setMessage("Do you want to visit this link: "+ rawResult.text +" ?")
+        dialogBuilder
+                .setTitle("Link Found")
+                .setMessage("Do you want to visit this link: " + result +" ?")
                 // if the dialog is cancelable
                 .setCancelable(true)
                 // positive button text and action
                 .setPositiveButton("Proceed", DialogInterface.OnClickListener {
-                    dialog, id -> navigate(rawResult.text)
+                    dialog, id -> navigate(result)
                 })
                 // negative button text and action
                 .setNegativeButton("Cancel", DialogInterface.OnClickListener {
@@ -86,9 +77,6 @@ class ScanActivity : SimpleActivity(), ZXingScannerView.ResultHandler{
         // set title for alert dialog box
         // show alert dialog
         alert.show()
-
-        // If you would like to resume scanning, call this method below:
-//         mScannerView!!.resumeCameraPreview(this);
     }
 }
 
