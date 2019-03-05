@@ -42,7 +42,8 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel
 import java.io.IOException
-
+import java.util.*
+import kotlin.concurrent.schedule
 
 class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     private val FADE_DELAY = 5000L
@@ -297,46 +298,50 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
 
     private fun detect_object(){
         mIsInPhotoMode = true;
-        this.handleShutter()
+        this.handleShutter();
 
-        val image: FirebaseVisionImage
+        Timer().schedule(800){
+            val image: FirebaseVisionImage
 
-        val file_uri = Uri.parse(getLastMediaPath())
+            val file_uri = Uri.parse(getLastMediaPath())
 
-        try {
-            image = FirebaseVisionImage.fromFilePath(applicationContext, mPreviewUri!!)
-            val labeler = FirebaseVision.getInstance().getOnDeviceImageLabeler();
-            labeler.processImage(image).addOnSuccessListener { labels ->
+            try {
+                image = FirebaseVisionImage.fromFilePath(applicationContext, mPreviewUri!!)
+                val labeler = FirebaseVision.getInstance().getCloudImageLabeler();
+                labeler.processImage(image).addOnSuccessListener { labels ->
 
-                Log.i("INFO", labels.size.toString())
-                var highestConfidence : Float = 0f;
-                var bestLabel  = -1
+                    Log.i("INFO", labels.size.toString())
+                    var highestConfidence : Float = 0f;
+                    var bestLabel  = -1
 
-                var i = 0
-                for (label in labels) {
-                    val text = label.text
-                    val entityId = label.entityId
-                    val confidence = label.confidence
-                    if (confidence > highestConfidence){
-                        highestConfidence = confidence
-                        bestLabel = i;
+                    var i = 0
+                    for (label in labels) {
+                        val text = label.text
+                        val entityId = label.entityId
+                        val confidence = label.confidence
+                        if (confidence > highestConfidence){
+                            highestConfidence = confidence
+                            bestLabel = i;
+                        }
+                        Log.i("INFO", text.toString() + " | " + i.toString() +" | " + confidence.toString())
+                        i++
                     }
-                    Log.i("INFO", text.toString() + " | " + i.toString() +" | " + confidence.toString())
-                    i++
+                    Log.i("INFO", bestLabel.toString());
+
+
+                    Log.i("INFO", labels.get(bestLabel).toString())
+                    toast(labels.get(bestLabel).text)
+
+                }.addOnFailureListener { e ->
+                    //this.toast(e.localizedMessage + "2");
                 }
-                Log.i("INFO", bestLabel.toString());
-
-
-                Log.i("INFO", labels.get(bestLabel).toString())
-                this.toast(labels.get(bestLabel).text)
-
-            }.addOnFailureListener { e ->
-                //this.toast(e.localizedMessage + "2");
+            } catch (e: IOException) {
+                //this.toast(e.localizedMessage + "1");
+                e.printStackTrace()
             }
-        } catch (e: IOException) {
-            //this.toast(e.localizedMessage + "1");
-            e.printStackTrace()
         }
+
+
     }
 
     private fun getLastMediaPath() : String {
