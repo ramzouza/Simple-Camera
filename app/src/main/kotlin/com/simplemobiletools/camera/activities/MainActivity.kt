@@ -18,6 +18,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.os.Vibrator
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -39,6 +40,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_change_resolution.view.*
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel
 import java.io.IOException
 
 
@@ -301,17 +303,33 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
 
         val file_uri = Uri.parse(getLastMediaPath())
 
-        this.toast(file_uri.toString());
         try {
             image = FirebaseVisionImage.fromFilePath(applicationContext, mPreviewUri!!)
             val labeler = FirebaseVision.getInstance().getOnDeviceImageLabeler();
             labeler.processImage(image).addOnSuccessListener { labels ->
+
+                Log.i("INFO", labels.size.toString())
+                var highestConfidence : Float = 0f;
+                var bestLabel  = -1
+
+                var i = 0
                 for (label in labels) {
                     val text = label.text
-                    this.toast(text)
                     val entityId = label.entityId
                     val confidence = label.confidence
+                    if (confidence > highestConfidence){
+                        highestConfidence = confidence
+                        bestLabel = i;
+                    }
+                    Log.i("INFO", text.toString() + " | " + i.toString() +" | " + confidence.toString())
+                    i++
                 }
+                Log.i("INFO", bestLabel.toString());
+
+
+                Log.i("INFO", labels.get(bestLabel).toString())
+                this.toast(labels.get(bestLabel).text)
+
             }.addOnFailureListener { e ->
                 //this.toast(e.localizedMessage + "2");
             }
