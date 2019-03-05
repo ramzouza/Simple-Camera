@@ -37,7 +37,10 @@ import com.simplemobiletools.commons.helpers.*
 import com.simplemobiletools.commons.models.Release
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_change_resolution.view.*
-import com.simplemobiletools.camera.firebase.BarcodeHandler
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.firebase.ml.vision.FirebaseVision
+import java.io.IOException
+
 
 class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     private val FADE_DELAY = 5000L
@@ -243,6 +246,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         toggle_photo_video.setOnClickListener { handleTogglePhotoVideo() }
         change_resolution.setOnClickListener { mPreview?.showChangeResolutionDialog() }
         qr_code!!.setOnClickListener { qr_code() }
+        detect_object!!.setOnClickListener{ detect_object() }
     }
 
     private fun toggleCamera() {
@@ -285,13 +289,36 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     }
 
     private fun qr_code(){
-//        toggleBottomButtons(true)
-//        handleShutter()
-//        this.toast(getLastMediaPath())
-
         val intent = Intent(applicationContext, ScanActivity::class.java)
         startActivity(intent)
+    }
 
+    private fun detect_object(){
+        mIsInPhotoMode = true;
+        this.handleShutter()
+
+        val image: FirebaseVisionImage
+
+        val file_uri = Uri.parse(getLastMediaPath())
+
+        this.toast(file_uri.toString());
+        try {
+            image = FirebaseVisionImage.fromFilePath(applicationContext, mPreviewUri!!)
+            val labeler = FirebaseVision.getInstance().getOnDeviceImageLabeler();
+            labeler.processImage(image).addOnSuccessListener { labels ->
+                for (label in labels) {
+                    val text = label.text
+                    this.toast(text)
+                    val entityId = label.entityId
+                    val confidence = label.confidence
+                }
+            }.addOnFailureListener { e ->
+                //this.toast(e.localizedMessage + "2");
+            }
+        } catch (e: IOException) {
+            //this.toast(e.localizedMessage + "1");
+            e.printStackTrace()
+        }
     }
 
     private fun getLastMediaPath() : String {
