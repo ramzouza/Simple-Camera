@@ -70,7 +70,49 @@ class FilterList : Fragment(),FilterListInterface {
 
         return itemView
     }
-    
+
+    fun displayImage(bitmap: Bitmap?,path: Uri) {
+        val r = Runnable {
+            val thumbImage : Bitmap?
+            Log.d("INSIDE DISPLAY, ",bitmap.toString())
+            if(bitmap == null)
+                thumbImage = BitmapTools.getPicture(activity!!, MainActivity.Main.IMAGE_FILTER,100,100)
+            else{
+                thumbImage = BitmapTools.getPicture(activity!!,path,100,100)}
+            if(thumbImage == null)
+                return@Runnable
+
+            ThumbnailsManager.clearThumbs()
+            thumbnailItemList.clear()
+
+            //add normal bitmap first
+            val thumbnailItem = ThumbnailItem()
+            thumbnailItem.image = thumbImage
+            thumbnailItem.filterName = "Normal"
+            ThumbnailsManager.addThumb(thumbnailItem)
+
+            //add Filter pack
+
+            val filters = FilterPack.getFilterPack(activity!!)
+
+            for(filter in filters){
+                val item = ThumbnailItem()
+                item.image = thumbImage
+                item.filter = filter
+                item.filterName = filter.name
+                ThumbnailsManager.addThumb(item)
+            }
+
+            thumbnailItemList.addAll(ThumbnailsManager.processThumbs(activity))
+            activity!!.runOnUiThread{
+                adapter.notifyDataSetChanged()
+            }
+
+
+        }
+        Thread(r).start()
+
+    }
 
 
 }
