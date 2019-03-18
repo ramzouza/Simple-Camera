@@ -7,7 +7,7 @@ android:
     - android-28
 
 script: 
-- ./gradlew main_menu
+- ./gradlew test
 
 notifications:
   slack: mini-capstone-konoha:0QohlfBAaXz34wuCg2SJMQZo
