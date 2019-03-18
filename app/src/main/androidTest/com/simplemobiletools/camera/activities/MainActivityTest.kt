@@ -35,7 +35,7 @@ class MainActivityTest {
     }
 
     @Test
-    fun advanceHub(){
+    fun advanceHubTest(){
         /*
 
         This Test make sure that the smartHub menu appear once the button Advanced Camera is pressed
