@@ -51,6 +51,8 @@ import androidx.appcompat.widget.Toolbar
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel
+import com.simplemobiletools.camera.Adapter.KnowledgeGraphAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_change_resolution.view.*
 import com.simplemobiletools.camera.interfaces.FilterListInterface
@@ -60,9 +62,9 @@ import kotlinx.android.synthetic.main.filter_main.*
 import java.util.*
 import java.io.IOException
 import kotlin.concurrent.schedule
+import com.android.volley.Response
+import org.json.JSONObject
 
-//import kotlinx.android.synthetic.main.filter_content.*
-//import kotlinx.android.synthetic.main.filter_main.*
 
 class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface {
 
@@ -341,7 +343,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, Filter
         mIsInPhotoMode = true;
         this.handleShutter();
 
-        Timer().schedule(800){
+        Timer().schedule(1000){
             val image: FirebaseVisionImage
 
             val file_uri = Uri.parse(getLastMediaPath())
@@ -354,8 +356,8 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, Filter
                     Log.i("INFO", labels.size.toString())
                     var highestConfidence : Float = 0f;
                     var bestLabel  = -1
-
-                    var i = 0
+                    var best : FirebaseVisionImageLabel? = null;
+                    var i = 0;
                     for (label in labels) {
                         val text = label.text
                         val entityId = label.entityId
@@ -363,14 +365,19 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, Filter
                         if (confidence > highestConfidence){
                             highestConfidence = confidence
                             bestLabel = i;
+                            best = label;
                         }
                         Log.i("INFO", text.toString() + " | " + i.toString() +" | " + confidence.toString())
                         i++
                     }
-                    Log.i("INFO", bestLabel.toString());
+                    Log.i("INFO", best?.entityId);
+                    val knowledgeGraph = KnowledgeGraphAdapter(applicationContext);
+                    var handler = Response.Listener<JSONObject> { response ->
+                        Log.i("INFO", response.toString(4))
+                    }
+                    if (best != null) knowledgeGraph.getSearchResult(best.text, handler)
 
 
-                    Log.i("INFO", labels.get(bestLabel).toString())
                     toast(labels.get(bestLabel).text)
 
                 }.addOnFailureListener { e ->
@@ -398,9 +405,6 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, Filter
             val path = applicationContext.getRealPathFromURI(mPreviewUri!!) ?: mPreviewUri!!.toString()
             openPathIntent(path, false, BuildConfig.APPLICATION_ID)
             this.toast(path)
-           //this.toast(bMap)
-//            val temp =BarcodeHandler.initBarcodeHandler(getApplicationContext(),path)
-
 
         }
     }
