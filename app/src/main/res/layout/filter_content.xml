@@ -32,16 +32,35 @@
     </com.simplemobiletools.camera.Utils.NonSwipeableViewPager>
 
     <Button
-        android:layout_alignParentBottom="true"
+        android:id="@+id/tabsExit"
         android:layout_width="50dp"
-        android:text="SAVE"
-        android:id="@+id/tabs"
-        app:tabGravity="fill"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/tabs"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="50dp"
 
-        android:background="@color/md_blue_200_dark"
-        android:layout_height="50dp">
+        android:layout_marginBottom="51dp"
+        android:background="@color/md_red_100_dark"
+        android:text="BACK"
+        app:tabGravity="fill">
 
     </Button>
+
+    <Button
+        android:id="@+id/tabs"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="51dp"
+        android:background="@color/md_blue_200_dark"
+        android:text="SAVE"
+        app:tabGravity="fill">
+
+    </Button>
+
 
 
 
