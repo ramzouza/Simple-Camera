@@ -292,7 +292,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, Filter
         change_resolution.setOnClickListener { mPreview?.showChangeResolutionDialog() }
         qr_code!!.setOnClickListener { qr_code() }
         detect_object.setOnClickListener {detect_object()}
-        Futur_feature4.setOnClickListener { startFilter() }
+        image_filter.setOnClickListener { startFilter() }
     }
 
     private fun toggleCamera() {

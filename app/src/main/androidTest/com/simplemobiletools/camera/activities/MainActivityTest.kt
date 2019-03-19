@@ -53,7 +53,7 @@ class MainActivityTest {
         onView(withId(R.id.qr_code)).check(matches(isDisplayed()));
         onView(withId(R.id.math_hub)).check(matches(isDisplayed()));
         onView(withId(R.id.detect_object)).check(matches(isDisplayed()));
-        onView(withId(R.id.Futur_feature4)).check(matches(isDisplayed()));
+        onView(withId(R.id.image_filter)).check(matches(isDisplayed()));
 
     }
 
