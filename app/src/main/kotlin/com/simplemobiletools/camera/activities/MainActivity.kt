@@ -130,6 +130,15 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, Filter
 
     override fun onResume() {
         super.onResume()
+        if (config.isSwipingEnabled){
+            advanced_camera.setVisibility(View.GONE)
+        }
+
+        else {
+            advanced_camera.setVisibility(View.VISIBLE)
+        }
+
+
         if (hasStorageAndCameraPermissions()) {
             mPreview?.onResumed()
             resumeCameraItems()
