@@ -68,6 +68,8 @@ import com.android.volley.Response
 import com.simplemobiletools.camera.Adapter.FirebaseVisionAdapter
 import com.simplemobiletools.camera.dialogs.SmartHubDialog
 import org.json.JSONObject
+import com.simplemobiletools.camera.extensions.OnSwipeTouchListener
+
 
 class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface {
 
@@ -296,6 +298,31 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, Filter
         qr_code!!.setOnClickListener { qr_code() }
         detect_object.setOnClickListener {detect_object()}
         image_filter.setOnClickListener { startFilter() }
+
+        swipe.setOnTouchListener(object : OnSwipeTouchListener(applicationContext) {
+
+            override fun onSwipeRight() {
+                if (lensMode == false ){
+                    toggleLens()
+                }
+            }
+            override fun onSwipeLeft() {
+                if (lensMode == true ){
+                    toggleLens()
+                }
+            }
+            // config.isSwipingEnabled
+            override fun onSwipeTop() {
+                if (true){
+                    val intent = Intent(applicationContext, SettingsActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+        })
+
+
+
+
     }
 
     private fun toggleCamera() {
