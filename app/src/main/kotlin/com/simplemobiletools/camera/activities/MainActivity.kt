@@ -302,18 +302,17 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, Filter
         swipe.setOnTouchListener(object : OnSwipeTouchListener(applicationContext) {
 
             override fun onSwipeRight() {
-                if (lensMode == false ){
+                if (lensMode == false && config.isSwipingEnabled){
                     toggleLens()
                 }
             }
             override fun onSwipeLeft() {
-                if (lensMode == true ){
+                if (lensMode == true && config.isSwipingEnabled){
                     toggleLens()
                 }
             }
-            // config.isSwipingEnabled
             override fun onSwipeTop() {
-                if (true){
+                if (config.isSwipingEnabled){
                     val intent = Intent(applicationContext, SettingsActivity::class.java)
                     startActivity(intent)
                 }

@@ -29,6 +29,10 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(FOCUS_BEFORE_CAPTURE, false)
         set(focus) = prefs.edit().putBoolean(FOCUS_BEFORE_CAPTURE, focus).apply()
 
+    var isSwipingEnabled: Boolean
+        get() = prefs.getBoolean(SWIPE, false)
+        set(swiping) = prefs.edit().putBoolean(SWIPE, swiping).apply()
+
     var volumeButtonsAsShutter: Boolean
         get() = prefs.getBoolean(VOLUME_BUTTONS_AS_SHUTTER, false)
         set(volumeButtonsAsShutter) = prefs.edit().putBoolean(VOLUME_BUTTONS_AS_SHUTTER, volumeButtonsAsShutter).apply()
@@ -85,3 +89,4 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getInt(PHOTO_QUALITY, 80)
         set(photoQuality) = prefs.edit().putInt(PHOTO_QUALITY, photoQuality).apply()
 }
+

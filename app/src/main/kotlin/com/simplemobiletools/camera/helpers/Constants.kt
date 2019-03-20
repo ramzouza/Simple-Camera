@@ -1,5 +1,7 @@
 package com.simplemobiletools.camera.helpers
 
+import android.graphics.SweepGradient
+
 const val ORIENT_PORTRAIT = 0
 const val ORIENT_LANDSCAPE_LEFT = 1
 const val ORIENT_LANDSCAPE_RIGHT = 2
@@ -8,6 +10,7 @@ const val ORIENT_LANDSCAPE_RIGHT = 2
 const val SAVE_PHOTOS = "save_photos"
 const val SOUND = "sound"
 const val FOCUS_BEFORE_CAPTURE = "focus_before_capture_2"
+const val SWIPE = "swipe"
 const val VOLUME_BUTTONS_AS_SHUTTER = "volume_buttons_as_shutter"
 const val TURN_FLASH_OFF_AT_STARTUP = "turn_flash_off_at_startup"
 const val FLIP_PHOTOS = "flip_photos"

@@ -30,6 +30,7 @@ class SettingsActivity : SimpleActivity() {
         setupAvoidWhatsNew()
         setupSound()
         setupFocusBeforeCapture()
+        setupSwipe()
         setupVolumeButtonsAsShutter()
         setupTurnFlashOffAtStartup()
         setupFlipPhotos()
@@ -117,6 +118,7 @@ class SettingsActivity : SimpleActivity() {
         }
     }
 
+
     private fun setupFocusBeforeCapture() {
         settings_focus_before_capture.isChecked = config.focusBeforeCapture
         settings_focus_before_capture_holder.setOnClickListener {
@@ -124,6 +126,15 @@ class SettingsActivity : SimpleActivity() {
             config.focusBeforeCapture = settings_focus_before_capture.isChecked
         }
     }
+
+    private fun setupSwipe() {
+        settings_swipe.isChecked = config.isSwipingEnabled
+        settings_swipe_holder.setOnClickListener {
+            settings_swipe.toggle()
+            config.isSwipingEnabled = settings_swipe.isChecked
+        }
+    }
+
 
     private fun setupVolumeButtonsAsShutter() {
         settings_volume_buttons_as_shutter.isChecked = config.volumeButtonsAsShutter
