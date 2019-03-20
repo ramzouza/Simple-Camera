@@ -13,6 +13,7 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
+import com.simplemobiletools.camera.dialogs.SmartHubDialog
 
 
 class ScanActivity : SimpleActivity(), ZXingScannerView.ResultHandler{
@@ -48,11 +49,13 @@ class ScanActivity : SimpleActivity(), ZXingScannerView.ResultHandler{
 
     override fun handleResult(rawResult: Result) {
         // build alert dialog
-        val dialogBuilder = AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
-
-        handleResultController(rawResult.text, dialogBuilder);
+        //val dialogBuilder = AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
+        val dialog : SmartHubDialog = SmartHubDialog(this@ScanActivity)
+        dialog.build("Link Found", "Do you want to visit this link: ${rawResult.text} ?",
+                "Visit", rawResult.text, "Copy to Clipboard", "link", rawResult.text)
+        //handleResultController(rawResult.text, dialogBuilder);
         // If you would like to resume scanning, call this method below:
-//         mScannerView!!.resumeCameraPreview(this);
+        mScannerView!!.resumeCameraPreview(this);
     }
 
     fun handleResultController(result : String, dialogBuilder : AlertDialog.Builder){

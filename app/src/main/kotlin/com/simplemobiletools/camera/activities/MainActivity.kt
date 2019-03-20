@@ -2,6 +2,7 @@ package com.simplemobiletools.camera.activities
 
 import android.app.Activity
 import android.content.ClipData
+import android.content.DialogInterface
 import android.content.Intent
 import android.hardware.SensorManager
 import android.net.Uri
@@ -15,6 +16,7 @@ import android.graphics.BitmapFactory
 //import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.os.Vibrator
+import android.text.Html
 import android.text.TextUtils
 import android.util.Log
 import android.widget.*
@@ -63,8 +65,9 @@ import java.util.*
 import java.io.IOException
 import kotlin.concurrent.schedule
 import com.android.volley.Response
+import com.simplemobiletools.camera.Adapter.FirebaseVisionAdapter
+import com.simplemobiletools.camera.dialogs.SmartHubDialog
 import org.json.JSONObject
-
 
 class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface {
 
@@ -343,53 +346,34 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, Filter
         mIsInPhotoMode = true;
         this.handleShutter();
 
-        Timer().schedule(1000){
-            val image: FirebaseVisionImage
+        Timer().schedule(1500) {
+            val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI // external URI
+            val lastMediaId = this@MainActivity.getLatestMediaId(uri) // get latest image ID
+            val file_uri = Uri.withAppendedPath(uri, lastMediaId.toString()) // get file uri
 
-            val file_uri = Uri.parse(getLastMediaPath())
+            val firebaseVisionAdapter = FirebaseVisionAdapter(this@MainActivity) // set up firebase detect object
+            val knowledgeGraph = KnowledgeGraphAdapter(this@MainActivity); // set up knowledge graph object
+            val dialog = SmartHubDialog(this@MainActivity) // setup the smart hub dialog
 
-            try {
-                image = FirebaseVisionImage.fromFilePath(applicationContext, mPreviewUri!!)
-                val labeler = FirebaseVision.getInstance().getCloudImageLabeler();
-                labeler.processImage(image).addOnSuccessListener { labels ->
-
-                    Log.i("INFO", labels.size.toString())
-                    var highestConfidence : Float = 0f;
-                    var bestLabel  = -1
-                    var best : FirebaseVisionImageLabel? = null;
-                    var i = 0;
-                    for (label in labels) {
-                        val text = label.text
-                        val entityId = label.entityId
-                        val confidence = label.confidence
-                        if (confidence > highestConfidence){
-                            highestConfidence = confidence
-                            bestLabel = i;
-                            best = label;
-                        }
-                        Log.i("INFO", text.toString() + " | " + i.toString() +" | " + confidence.toString())
-                        i++
-                    }
-                    Log.i("INFO", best?.entityId);
-                    val knowledgeGraph = KnowledgeGraphAdapter(applicationContext);
-                    var handler = Response.Listener<JSONObject> { response ->
-                        Log.i("INFO", response.toString(4))
-                    }
-                    if (best != null) knowledgeGraph.getSearchResult(best.text, handler)
-
-
-                    toast(labels.get(bestLabel).text)
-
-                }.addOnFailureListener { e ->
-                    //this.toast(e.localizedMessage + "2");
-                }
-            } catch (e: IOException) {
-                //this.toast(e.localizedMessage + "1");
-                e.printStackTrace()
+            // this handler is invoked after knowledgeGraph.getSearchResult is called.
+            var dialogHandler = fun (detectedObj : String, response : JSONObject) {
+                Log.i("INFO", response.toString(4))
+                val jsonArray = response.getJSONArray("itemListElement").getJSONObject(0).getJSONObject("result").getJSONObject("detailedDescription");
+                val message = jsonArray.getString("articleBody");
+                val url = jsonArray.getString("url")
+                dialog.build("Detected Object: ${detectedObj}", message,
+                        "Wikipedia",url,
+                        "JSON", "JSON", response.toString(3));
             }
+
+            // this handler is invoked after firebaseVisionAdapter.vision is called.
+            val visionHandler = fun (term : String){
+                knowledgeGraph.getSearchResult(term, dialogHandler)
+            }
+
+            // detect the object
+            firebaseVisionAdapter.vision(file_uri, visionHandler)
         }
-
-
     }
 
     private fun getLastMediaPath() : String {
