@@ -22,10 +22,9 @@ import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import com.simplemobiletools.camera.extensions.config
 
 @RunWith(AndroidJUnit4::class)
-class MainActivityTest {
+class SwipingTest {
 
     @Rule
     @JvmField
@@ -33,49 +32,46 @@ class MainActivityTest {
 
     @Before
     fun setUp() {
+        // enabling swipe mode: open settings, click on enable swipe button and than return to main view
+        onView(withId(R.id.settings)).perform(click())
+        onView(withId(R.id.settings_swipe)).perform(click())
+        Espresso.pressBack()
+
     }
 
     @After
     fun tearDown() {
+        // disabling swipe mode
+        onView(withId(R.id.settings)).perform(click())
+        onView(withId(R.id.settings_swipe)).perform(click())
+        Espresso.pressBack()
     }
 
     @Test
-    fun advanceHubTest(){
-        /*
-
-        This Test make sure that the smartHub menu appear once the button Advanced Camera is pressed
-
-        */
-
-        //assert that the button is display
-        onView(withId(R.id.advanced_camera)).check(matches(isDisplayed()))
-
-        //click on the button
-        onView(withId(R.id.advanced_camera)).perform(click())
-
+    fun swipingTest(){
+        onView(withId(R.id.swipe)).perform(swipeRight())
 
         // Once the button advance camera is click, the smart hub appear with 4 buttons displayed
         onView(withId(R.id.qr_code)).check(matches(isDisplayed()))
         onView(withId(R.id.math_hub)).check(matches(isDisplayed()))
         onView(withId(R.id.detect_object)).check(matches(isDisplayed()))
         onView(withId(R.id.image_filter)).check(matches(isDisplayed()))
-
     }
 
     @Test
-    fun detectObjectTest(){
-        onView(withId(R.id.advanced_camera)).check(matches(isDisplayed()))
-
-        //click on the button
-        onView(withId(R.id.advanced_camera)).perform(click())
-
+    fun enableSwipingUpDownTest(){
+        // ensure that swiping is working
+        onView(withId(R.id.swipe)).perform(swipeRight())
 
         // Once the button advance camera is click, the smart hub appear with 4 buttons displayed
+        onView(withId(R.id.qr_code)).check(matches(isDisplayed()))
+        onView(withId(R.id.math_hub)).check(matches(isDisplayed()))
         onView(withId(R.id.detect_object)).check(matches(isDisplayed()))
-
-        // Once button is clicked check thats it clicked idk
-        onView(withId(R.id.detect_object)).perform(click())
-
+        onView(withId(R.id.image_filter)).check(matches(isDisplayed()))
     }
+
+
+
+
 
 }
