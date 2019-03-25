@@ -57,21 +57,5 @@ class MainActivityTest {
 
     }
 
-    @Test
-    fun detectObjectTest (){
-        onView(withId(R.id.advanced_camera)).check(matches(isDisplayed()));
-
-        //click on the button
-        onView(withId(R.id.advanced_camera)).perform(click());
-
-
-        // Once the button advance camera is click, the smart hub appear with 4 buttons displayed
-        onView(withId(R.id.detect_object)).check(matches(isDisplayed()));
-
-        // Once button is clicked check thats it clicked idk
-        onView(withId(R.id.detect_object)).perform(click());
-
-    }
-
     
 }
