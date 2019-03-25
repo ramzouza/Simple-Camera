@@ -23,9 +23,7 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
-            testCoverageEnabled = true
         }
-
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -91,13 +89,3 @@ if (propFile.canRead()) {
 }
 
 apply plugin: 'com.google.gms.google-services'
-
-apply plugin: 'jacoco-android'
-
-jacoco {
-    toolVersion = "0.8.3"
-}
-
-tasks.withType(Test){
-    jacoco.includeNoLocationClasses = true
-}
