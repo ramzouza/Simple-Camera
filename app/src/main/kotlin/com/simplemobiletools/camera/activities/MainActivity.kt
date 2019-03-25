@@ -797,6 +797,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, Filter
         Log.d("Image Preview, ",image_preview.toString())
         image_preview.setImageBitmap(originalImage)
         tabs.setOnClickListener{saveImageToGallery()}
+        tabsExit.setOnClickListener({startActivity(Intent(this, MainActivity::class.java))})
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
