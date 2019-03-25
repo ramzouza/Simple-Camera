@@ -14,6 +14,7 @@ jobs:
     - stage: test
       # Emulator Management: Create, Start and Wait
       before_script:
+        - echo "y" | android update sdk -a --no-ui --filter sys-img-armeabi-v7a-android-28,sys-img-x86_64-android-28
         - echo no | android create avd --force -n test -t android-28 --abi armeabi-v7a
         - emulator -avd test -no-skin -no-audio -no-window &
         - android-wait-for-emulator
