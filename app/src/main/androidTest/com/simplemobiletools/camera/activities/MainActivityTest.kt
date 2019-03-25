@@ -77,6 +77,9 @@ class MainActivityTest {
 
     @Test
     fun swipingTest(){
+        onView(withId(R.id.settings)).perform(click())
+        onView(withId(R.id.settings_swipe)).perform(click())
+        Espresso.pressBack()
 
         onView(withId(R.id.swipe)).perform(swipeRight())
 
@@ -86,16 +89,19 @@ class MainActivityTest {
         onView(withId(R.id.detect_object)).check(matches(isDisplayed()))
         onView(withId(R.id.image_filter)).check(matches(isDisplayed()))
 
+                onView(withId(R.id.settings)).perform(click())
+                onView(withId(R.id.settings_swipe)).perform(click())
+                Espresso.pressBack()
     }
 
     @Test
-    fun enableSwipingTest(){
+    fun enableSwipingUpDownTest(){
 
       //      if (context.config.isSwipingEnabled){
 
      //   }
         // enabling swipe mode: open settings, click on enable swipe button and than return to main view
-        onView(withId(R.id.settings)).perform(doubleClick())
+        onView(withId(R.id.settings)).perform(click())
         onView(withId(R.id.settings_swipe)).perform(click())
         Espresso.pressBack()
 
@@ -114,7 +120,9 @@ class MainActivityTest {
         onView(withId(R.id.settings_swipe)).perform(click())
         Espresso.pressBack()
 
-
+                onView(withId(R.id.settings)).perform(click())
+                onView(withId(R.id.settings_swipe)).perform(click())
+                Espresso.pressBack()
 
     }
 
