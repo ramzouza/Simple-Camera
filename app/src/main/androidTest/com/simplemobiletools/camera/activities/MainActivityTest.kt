@@ -3,9 +3,9 @@ package com.simplemobiletools.camera.activities
 import org.junit.After
 import org.junit.Before
 import android.support.*
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.swipeRight
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -14,6 +14,7 @@ import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
 import com.simplemobiletools.camera.R
 import kotlinx.android.synthetic.main.activity_main.view.*
+import com.simplemobiletools.camera.extensions.config
 
 import org.junit.Assert.*
 import org.junit.Rule
@@ -87,7 +88,38 @@ class MainActivityTest {
 
     }
 
-    
+    @Test
+    fun enableSwipingTest(){
+
+      //      if (context.config.isSwipingEnabled){
+
+     //   }
+        // enabling swipe mode: open settings, click on enable swipe button and than return to main view
+        onView(withId(R.id.settings)).perform(doubleClick())
+        onView(withId(R.id.settings_swipe)).perform(click())
+        Espresso.pressBack()
+
+        // ensure that swiping is working
+        onView(withId(R.id.swipe)).perform(swipeRight())
+
+        // Once the button advance camera is click, the smart hub appear with 4 buttons displayed
+        onView(withId(R.id.qr_code)).check(matches(isDisplayed()))
+        onView(withId(R.id.math_hub)).check(matches(isDisplayed()))
+        onView(withId(R.id.detect_object)).check(matches(isDisplayed()))
+        onView(withId(R.id.image_filter)).check(matches(isDisplayed()))
+
+
+        onView(withId(R.id.swipe)).perform(swipeUp())
+        onView(withId(R.id.settings_swipe)).check(matches(isDisplayed()))
+        onView(withId(R.id.settings_swipe)).perform(click())
+        Espresso.pressBack()
+
+
+
+    }
+
+
+
 
 
 }
