@@ -26,21 +26,8 @@ class FirebaseVisionAdapter {
             val labeler = FirebaseVision.getInstance().getCloudImageLabeler();
             labeler.processImage(image).addOnSuccessListener { labels ->
 
-                var highestConfidence: Float = 0f;
-                var bestLabel = -1
-                var best: FirebaseVisionImageLabel? = null;
-                var i = 0;
-                for (label in labels) {
-                    val text = label.text
-                    val entityId = label.entityId
-                    val confidence = label.confidence
-                    if (confidence > highestConfidence) {
-                        highestConfidence = confidence
-                        bestLabel = i;
-                        best = label;
-                    }
-                    i++
-                }
+                val best = findBest(labels);
+
                 if (best != null) {
                     context.toast(best.text)
                     handler(best.text);
@@ -50,4 +37,25 @@ class FirebaseVisionAdapter {
             e.printStackTrace()
         }
     }
+
+    public fun findBest(labels : Collection<FirebaseVisionImageLabel>) : FirebaseVisionImageLabel? {
+        var highestConfidence: Float = 0f;
+        var bestLabel = -1
+        var best: FirebaseVisionImageLabel? = null;
+        var i = 0;
+        for (label in labels) {
+            val text = label.text
+            val entityId = label.entityId
+            val confidence = label.confidence
+            if (confidence > highestConfidence) {
+                highestConfidence = confidence
+                bestLabel = i;
+                best = label;
+            }
+            i++
+        }
+        return best;
+    }
+
+
 }
