@@ -78,4 +78,14 @@ class MainActivityTest {
 
     }
 
+    @Test
+    fun qrCodeTest(){
+        onView(withId(R.id.advanced_camera)).check(matches(isDisplayed()))
+
+        //click on the button
+        onView(withId(R.id.advanced_camera)).perform(click())
+
+        onView(withId(R.id.qr_code)).check(matches(isDisplayed()))
+
+    }
 }
