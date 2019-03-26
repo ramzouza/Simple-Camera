@@ -1,6 +1,8 @@
 package com.simplemobiletools.camera.activities
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.DialogInterface
 import android.content.Intent
 import android.hardware.SensorManager
 import android.net.Uri
@@ -8,23 +10,35 @@ import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
 import android.view.*
-import android.widget.HorizontalScrollView
-import android.widget.RelativeLayout
 import android.graphics.Bitmap
+
 import android.graphics.BitmapFactory
-import android.widget.LinearLayout
+import android.graphics.Matrix
 //import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
 import android.os.Vibrator
+import android.text.Html
+import android.text.TextUtils
+import android.util.Log
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.snackbar.Snackbar
+import com.karumi.dexter.Dexter
+
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.simplemobiletools.camera.Adapter.ViewConnection
 import com.simplemobiletools.camera.BuildConfig
 import com.simplemobiletools.camera.R
+import com.simplemobiletools.camera.Utils.BitmapTools
+import com.simplemobiletools.camera.Utils.NonSwipeableViewPager
 import com.simplemobiletools.camera.extensions.config
 import com.simplemobiletools.camera.extensions.navBarHeight
 import com.simplemobiletools.camera.helpers.*
@@ -35,11 +49,50 @@ import com.simplemobiletools.camera.views.FocusCircleView
 import com.simplemobiletools.commons.extensions.*
 import com.simplemobiletools.commons.helpers.*
 import com.simplemobiletools.commons.models.Release
+import android.view.MenuItem
+import androidx.appcompat.widget.Toolbar
+import com.google.android.material.tabs.TabLayout
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel
+import com.simplemobiletools.camera.Adapter.KnowledgeGraphAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_change_resolution.view.*
-import com.simplemobiletools.camera.firebase.BarcodeHandler
+import com.simplemobiletools.camera.interfaces.FilterListInterface
+import com.zomato.photofilters.imageprocessors.Filter
+import kotlinx.android.synthetic.main.filter_content.*
+import kotlinx.android.synthetic.main.filter_main.*
+import java.util.*
+import java.io.IOException
+import kotlin.concurrent.schedule
+import com.android.volley.Response
+import com.simplemobiletools.camera.Adapter.FirebaseVisionAdapter
+import com.simplemobiletools.camera.dialogs.SmartHubDialog
+import org.json.JSONObject
+import com.simplemobiletools.camera.extensions.OnSwipeTouchListener
 
-class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
+
+open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface {
+
+    val GALLERY_PERMISSION = 1000
+
+    init{
+        System.loadLibrary("NativeImageProcessor")
+    }
+
+    object Main{
+        var IMAGE_FILTER = Uri.parse("will be set when LoadImage() is call")
+
+    }
+
+    internal var originalImage:Bitmap?=null
+    internal lateinit var filteredImage:Bitmap
+    internal lateinit var finalImage:Bitmap
+
+    internal lateinit var filteredList: FilterList
+
+    private var filterMenu: Menu? = null
+
     private val FADE_DELAY = 5000L
 
     lateinit var mTimerHandler: Handler
@@ -78,6 +131,15 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
 
     override fun onResume() {
         super.onResume()
+//        if (config.isSwipingEnabled){
+//            findViewById<ImageView>(R.id.advanced_camera).setVisibility(View.GONE)
+//        }
+//
+//        else {
+//            findViewById<ImageView>(R.id.advanced_camera).setVisibility(View.VISIBLE)
+//        }
+
+
         if (hasStorageAndCameraPermissions()) {
             mPreview?.onResumed()
             resumeCameraItems()
@@ -237,12 +299,39 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         toggle_camera.setOnClickListener { toggleCamera() }
         last_photo_video_preview.setOnClickListener { showLastMediaPreview() }
         advanced_camera.setOnClickListener { toggleLens() }
+
         toggle_flash.setOnClickListener { toggleFlash() }
         shutter.setOnClickListener { shutterPressed() }
         settings.setOnClickListener { launchSettings() }
         toggle_photo_video.setOnClickListener { handleTogglePhotoVideo() }
         change_resolution.setOnClickListener { mPreview?.showChangeResolutionDialog() }
         qr_code!!.setOnClickListener { qr_code() }
+        detect_object.setOnClickListener {detect_object()}
+        image_filter.setOnClickListener { startFilter() }
+
+        swipe.setOnTouchListener(object : OnSwipeTouchListener(applicationContext) {
+
+            override fun onSwipeRight() {
+                if (lensMode == false && config.isSwipingEnabled){
+                    toggleLens()
+                }
+            }
+            override fun onSwipeLeft() {
+                if (lensMode == true && config.isSwipingEnabled){
+                    toggleLens()
+                }
+            }
+            override fun onSwipeTop() {
+                if (config.isSwipingEnabled){
+                    val intent = Intent(applicationContext, SettingsActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+        })
+
+
+
+
     }
 
     private fun toggleCamera() {
@@ -264,34 +353,72 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
 
         vibrator.vibrate(400);
 
-           this.lensMode = !this.lensMode
+        this.lensMode = !this.lensMode
 
-           if (this.lensMode){ // We're in lens mode now
-               fadeAnim(btn_holder, .0f)
-               fadeAnim(smart_hub_scroll, 1f)
-               // make bottom bar go away
-               // make advanced hub appear
+        if (this.lensMode){ // We're in lens mode now
+            fadeAnim(btn_holder, .0f)
+            fadeAnim(smart_hub_scroll, 1f)
+            // make bottom bar go away
+            // make advanced hub appear
 
-           } else { // we're in camera mode now
-               fadeAnim(btn_holder, 1f)
-               fadeAnim(smart_hub_scroll, .0f)
-               findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.VISIBLE);
-               // make advanced hub appear
-               // make bottom bar appear
+        } else { // we're in camera mode now
+            fadeAnim(btn_holder, 1f)
+            fadeAnim(smart_hub_scroll, .0f)
+            findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.VISIBLE);
+            // make advanced hub appear
+            // make bottom bar appear
 
-           }
+        }
 
 
     }
 
     private fun qr_code(){
-//        toggleBottomButtons(true)
-//        handleShutter()
-//        this.toast(getLastMediaPath())
-
         val intent = Intent(applicationContext, ScanActivity::class.java)
         startActivity(intent)
+    }
 
+    private fun detect_object(){
+        mIsInPhotoMode = true;
+        this.handleShutter();
+
+        Timer().schedule(1500) {
+            val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI // external URI
+            val lastMediaId = this@MainActivity.getLatestMediaId(uri) // get latest image ID
+            val file_uri = Uri.withAppendedPath(uri, lastMediaId.toString()) // get file uri
+
+            val firebaseVisionAdapter = FirebaseVisionAdapter(this@MainActivity) // set up firebase detect object
+            val knowledgeGraph = KnowledgeGraphAdapter(this@MainActivity); // set up knowledge graph object
+            val dialog = SmartHubDialog(this@MainActivity) // setup the smart hub dialog
+
+            // this handler is invoked after knowledgeGraph.getSearchResult is called.
+            var dialogHandler = fun (detectedObj : String, response : JSONObject) {
+                Log.i("INFO", response.toString(4))
+
+                var message : String;
+                var url : String
+                try{
+                    val jsonArray = response.getJSONArray("itemListElement").getJSONObject(0).getJSONObject("result").getJSONObject("detailedDescription");
+                    message = jsonArray.getString("articleBody");
+                    url = jsonArray.getString("url")
+                } catch (e : Exception){
+                    message = "Hmm... I recognize the object but I cannot find any meaningful info about it.";
+                    url = "https://en.wikipedia.org/wiki/Special:Search?search=${detectedObj}&go=Go"
+                }
+
+                dialog.build("Detected Object: ${detectedObj}", message,
+                        "Wikipedia",url,
+                        "JSON", "JSON", response.toString(3));
+            }
+
+            // this handler is invoked after firebaseVisionAdapter.vision is called.
+            val visionHandler = fun (term : String){
+                knowledgeGraph.getSearchResult(term, dialogHandler)
+            }
+
+            // detect the object
+            firebaseVisionAdapter.vision(file_uri, visionHandler)
+        }
     }
 
     private fun getLastMediaPath() : String {
@@ -307,9 +434,6 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
             val path = applicationContext.getRealPathFromURI(mPreviewUri!!) ?: mPreviewUri!!.toString()
             openPathIntent(path, false, BuildConfig.APPLICATION_ID)
             this.toast(path)
-           //this.toast(bMap)
-//            val temp =BarcodeHandler.initBarcodeHandler(getApplicationContext(),path)
-
 
         }
     }
@@ -651,4 +775,124 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
             checkWhatsNew(this, BuildConfig.VERSION_CODE)
         }
     }
+
+    //Filter section
+    private fun startFilter(){
+        video_rec_curr_timer.beGone()
+        Log.d("YANISTEST","TEAST THIS")
+        setContentView(R.layout.filter_main)
+        Log.d("YANISTEST2","TEAST THIS")
+        loadImage()
+        Log.d("YANISTEST3","TEAST THIS")
+        setupViewPager(viewPager)
+        Log.d("YANISTES4","TEAST THIS")
+    }
+
+    private fun setupViewPager(viewPager: NonSwipeableViewPager?) {
+        val adapter = ViewConnection(supportFragmentManager)
+
+        filteredList = FilterList()
+        filteredList.setListener(this)
+
+        adapter.addFragment(filteredList,"FILTERS")
+
+        viewPager!!.adapter = adapter
+
+    }
+
+    private fun loadImage() {
+        if (mPreviewUri != null) {
+            Main.IMAGE_FILTER = getFinalUriFromPath(applicationContext.getRealPathFromURI(mPreviewUri!!) ?: mPreviewUri!!.toString(),BuildConfig.APPLICATION_ID)
+            // Main.IMAGE_NAME = Uri.parse("content:/"+applicationContext.getRealPathFromURI(mPreviewUri!!) ?: mPreviewUri!!.toString())
+        }
+        originalImage = BitmapTools.getPicture(this,Main.IMAGE_FILTER,300,300)
+        filteredImage = originalImage!!.copy(Bitmap.Config.ARGB_8888,true)
+        finalImage = originalImage!!.copy(Bitmap.Config.ARGB_8888,true)
+        Log.d("Testing Original, ",originalImage.toString())
+        Log.d("Image Preview, ",image_preview.toString())
+
+
+
+
+        image_preview.setImageBitmap(originalImage)
+        image_preview.setRotation(90F)
+        tabs.setOnClickListener{saveImageToGallery()}
+        tabsExit.setOnClickListener({startActivity(Intent(this, MainActivity::class.java))})
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu,menu)
+        this.filterMenu = menu
+
+        return true
+    }
+    private fun saveImageToGallery() {
+
+        val matrix = Matrix()
+
+        matrix.postRotate(-270F)
+
+        val scaledBitmap = Bitmap.createScaledBitmap(finalImage, finalImage.width, finalImage.height, true)
+
+        val rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.width, scaledBitmap.height, matrix, true)
+
+        Dexter.withActivity(this)
+                .withPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withListener(object: MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        if(report!!.areAllPermissionsGranted()){
+                            val path = BitmapTools.insertImage(contentResolver,rotatedBitmap,
+                                    System.currentTimeMillis().toString()+"_profile.jpg","")
+
+                            if(!TextUtils.isEmpty(path)){
+
+                                val snackBar = Snackbar.make(coordinator,"Image saved to gallery",Snackbar.LENGTH_LONG)
+
+                                snackBar.show()
+                            }
+                            else{
+                                val snackBar = Snackbar.make(coordinator,"Unable to save image",Snackbar.LENGTH_LONG)
+                            }
+                        }
+                        else
+                            Toast.makeText(applicationContext,"Permission denied", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                            permissions: MutableList<PermissionRequest>?,
+                            token: PermissionToken?
+                    ) {
+                        token!!.continuePermissionRequest()
+                    }
+
+                }).check()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(resultCode == Activity.RESULT_OK && requestCode == GALLERY_PERMISSION){
+
+            var bitmap = BitmapTools.getPicture(this,data!!.data!!,800,800)
+
+            originalImage = null
+            finalImage!!.recycle()
+            filteredImage!!.recycle()
+
+            originalImage = bitmap.copy(Bitmap.Config.ARGB_8888,true)
+            filteredImage = originalImage!!.copy(Bitmap.Config.ARGB_8888,true)
+            finalImage = originalImage!!.copy(Bitmap.Config.ARGB_8888,true)
+
+            bitmap.recycle()
+
+            filteredList.displayImage(bitmap,data!!.data!!)
+            image_preview.setImageBitmap(filteredImage)
+        }
+    }
+
+    override fun onFilterSelected(filter: Filter) {
+        filteredImage = originalImage!!.copy(Bitmap.Config.ARGB_8888,true)
+        image_preview.setImageBitmap(filter.processFilter(filteredImage))
+        finalImage = filteredImage.copy(Bitmap.Config.ARGB_8888,true)
+    }
+
 }

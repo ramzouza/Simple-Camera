@@ -1,3 +1,4 @@
+import android.app.Activity
 import android.app.AlertDialog
 import com.simplemobiletools.camera.activities.ScanActivity
 import org.junit.*
@@ -12,10 +13,19 @@ import org.mockito.stubbing.Answer
 
 import org.mockito.Mockito.*
 import android.content.DialogInterface
+import com.android.volley.RequestQueue
+import com.google.android.gms.vision.label.ImageLabel
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel
+import com.simplemobiletools.camera.Adapter.FirebaseVisionAdapter
+import com.simplemobiletools.camera.Adapter.KnowledgeGraphAdapter
+import com.simplemobiletools.camera.activities.MainActivity
+import com.simplemobiletools.camera.activities.SimpleActivity
+import junit.framework.Assert.assertEquals
+import org.json.JSONObject
 import org.mockito.Matchers
 
 import java.util.ArrayList
-class KtUnitTests() {
+public class KtUnitTests() {
     @Test fun ktTestBasic () {
         Assert.assertTrue(true)
     }
@@ -73,7 +83,71 @@ class KtUnitTests() {
         verify<AlertDialog.Builder>(builderList[2]).setCancelable(true)
     }
 
+    @Test
+    fun knowledgeGraphQueryTest() {
+        val act = mock(MainActivity::class.java);
+        val queue = mock(RequestQueue::class.java);
+        val adapter = KnowledgeGraphAdapter(act, queue);
+        val term = "apple";
+        val query = adapter.constructQuery(term);
+        assertEquals(query, "https://kgsearch.googleapis.com/v1/entities:search?query=${term}&limit=1&key=AIzaSyB3Z174eJU4D57v8gP3KY1qzZtQdsjcu7o");
+    }
+
+    @Test
+    fun firebaseVisionAdapterFindBestWhenAssortedOrder(){
+        val act = mock(MainActivity::class.java);
+        val adapter = FirebaseVisionAdapter(act);
+        val collection = ArrayList<FirebaseVisionImageLabel>();
+
+        val label = FirebaseVisionImageLabel(ImageLabel("label1","desc1",0.01f));
+        val label2 = FirebaseVisionImageLabel(ImageLabel("label2","desc1",0.66f));
+        val label3 = FirebaseVisionImageLabel(ImageLabel("label3","desc1",0.33f));
+        val label4 = FirebaseVisionImageLabel(ImageLabel("label4","desc1",0.20f));
+        collection.add(label);
+        collection.add(label2);
+        collection.add(label3);
+        collection.add(label4);
+
+        val best = adapter.findBest(collection);
+
+        assertEquals(label2,best);
+    }
+
+    @Test
+    fun firebaseVisionAdapterFindBestWhenOneElement(){
+        val act = mock(MainActivity::class.java);
+        val adapter = FirebaseVisionAdapter(act);
+        val collection = ArrayList<FirebaseVisionImageLabel>();
+
+        val label = FirebaseVisionImageLabel(ImageLabel("label1","desc1",0.50f));
+        collection.add(label);
+
+        val best = adapter.findBest(collection);
+
+        assertEquals(label,best);
+    }
+
+    @Test
+    fun firebaseVisionAdapterFindBestWhenEmpty(){
+        val act = mock(MainActivity::class.java);
+        val adapter = FirebaseVisionAdapter(act);
+        val collection = ArrayList<FirebaseVisionImageLabel>();
+
+
+        val best = adapter.findBest(collection);
+
+        assertEquals(null, best);
+    }
+
+
 
 
 
 }
+
+
+
+
+
+
+

@@ -83,28 +83,20 @@
                 android:src="@drawable/ic_qr_code" />
 
             <ImageView
-                android:id="@+id/math_hub"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/smart_hub"
-                android:layout_weight="1"
-                android:src="@drawable/ic_shutter" />
-
-            <ImageView
-                android:id="@+id/facial_recognition_hub"
+                android:id="@+id/detect_object"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="@dimen/normal_margin"
-                android:src="@drawable/ic_plus" />
+                android:src="@drawable/ic_detect_obj" />
 
             <ImageView
-                android:id="@+id/Futur_feature4"
+                android:id="@+id/image_filter"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="@dimen/normal_margin"
-                android:src="@drawable/ic_plus" />
+                android:src="@drawable/ic_img_filter" />
 
             <ImageView
                 android:id="@+id/Futur_feature5"
@@ -124,6 +116,17 @@
 
         </LinearLayout>
     </HorizontalScrollView>
+
+    <LinearLayout
+        android:id="@+id/swipe"
+        android:layout_width="450dp"
+        android:layout_height="325dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="100dp"
+        android:layout_weight="1"
+        android:gravity="clip_vertical|center_horizontal"
+        android:orientation="horizontal"
+        android:visibility="visible" />
 
     <LinearLayout
         android:id="@+id/btn_holder"
