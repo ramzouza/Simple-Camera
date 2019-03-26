@@ -9,6 +9,8 @@ import org.mockito.InOrder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import com.simplemobiletools.camera.Adapter.FirebaseVisionAdapter;
+import com.simplemobiletools.camera.Adapter.KnowledgeGraphAdapter;
 import com.simplemobiletools.camera.activities.MainActivity;
 import com.simplemobiletools.camera.activities.ScanActivity;
 import static org.mockito.Mockito.*;
@@ -63,6 +65,11 @@ public class UnitTests {
         verify(builderList.get(1)).setMessage("Do you want to visit this link: " + result +" ?");
         verify(builderList.get(2)).setCancelable(true);
     }
+
+
+
+
+
 
 
 

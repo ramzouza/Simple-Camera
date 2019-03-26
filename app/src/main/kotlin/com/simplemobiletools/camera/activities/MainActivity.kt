@@ -71,7 +71,7 @@ import org.json.JSONObject
 import com.simplemobiletools.camera.extensions.OnSwipeTouchListener
 
 
-class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface {
+open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface {
 
     val GALLERY_PERMISSION = 1000
 

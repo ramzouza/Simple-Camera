@@ -1,3 +1,4 @@
+import android.app.Activity
 import android.app.AlertDialog
 import com.simplemobiletools.camera.activities.ScanActivity
 import org.junit.*
@@ -12,10 +13,16 @@ import org.mockito.stubbing.Answer
 
 import org.mockito.Mockito.*
 import android.content.DialogInterface
+import com.android.volley.RequestQueue
+import com.simplemobiletools.camera.Adapter.KnowledgeGraphAdapter
+import com.simplemobiletools.camera.activities.MainActivity
+import com.simplemobiletools.camera.activities.SimpleActivity
+import junit.framework.Assert.assertEquals
+import org.json.JSONObject
 import org.mockito.Matchers
 
 import java.util.ArrayList
-class KtUnitTests() {
+public class KtUnitTests() {
     @Test fun ktTestBasic () {
         Assert.assertTrue(true)
     }
@@ -73,7 +80,19 @@ class KtUnitTests() {
         verify<AlertDialog.Builder>(builderList[2]).setCancelable(true)
     }
 
-
-
+    @Test
+    fun knowledgeGraphQueryTest() {
+        val act = mock(MainActivity::class.java);
+        val queue = mock(RequestQueue::class.java);
+        val adapter = KnowledgeGraphAdapter(act, queue);
+        val term = "apple";
+        val query = adapter.constructQuery(term);
+        assertEquals(query, "https://kgsearch.googleapis.com/v1/entities:search?query=${term}&limit=1&key=AIzaSyB3Z174eJU4D57v8gP3KY1qzZtQdsjcu7o");
+    }
 
 }
+
+
+
+
+

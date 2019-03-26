@@ -26,7 +26,6 @@ class FirebaseVisionAdapter {
             val labeler = FirebaseVision.getInstance().getCloudImageLabeler();
             labeler.processImage(image).addOnSuccessListener { labels ->
 
-                Log.i("INFO", labels.size.toString())
                 var highestConfidence: Float = 0f;
                 var bestLabel = -1
                 var best: FirebaseVisionImageLabel? = null;
@@ -40,11 +39,9 @@ class FirebaseVisionAdapter {
                         bestLabel = i;
                         best = label;
                     }
-                    Log.i("INFO", text.toString() + " | " + i.toString() + " | " + confidence.toString())
                     i++
                 }
                 if (best != null) {
-                    Log.i("INFO", best?.entityId);
                     context.toast(best.text)
                     handler(best.text);
                 };
