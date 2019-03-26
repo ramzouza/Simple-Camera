@@ -17,7 +17,7 @@
             android:id="@+id/thumbnail"
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
-
+            android:rotation="90"
             android:layout_width="80dp"
             android:layout_height="80dp"/>
 

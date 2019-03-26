@@ -13,6 +13,7 @@ import android.view.*
 import android.graphics.Bitmap
 
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 //import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.os.Vibrator
@@ -800,7 +801,12 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         finalImage = originalImage!!.copy(Bitmap.Config.ARGB_8888,true)
         Log.d("Testing Original, ",originalImage.toString())
         Log.d("Image Preview, ",image_preview.toString())
+
+
+
+
         image_preview.setImageBitmap(originalImage)
+        image_preview.setRotation(90F)
         tabs.setOnClickListener{saveImageToGallery()}
         tabsExit.setOnClickListener({startActivity(Intent(this, MainActivity::class.java))})
     }
@@ -813,13 +819,21 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     }
     private fun saveImageToGallery() {
 
+        val matrix = Matrix()
+
+        matrix.postRotate(-270F)
+
+        val scaledBitmap = Bitmap.createScaledBitmap(finalImage, finalImage.width, finalImage.height, true)
+
+        val rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.width, scaledBitmap.height, matrix, true)
+
         Dexter.withActivity(this)
                 .withPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE,
                         android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .withListener(object: MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         if(report!!.areAllPermissionsGranted()){
-                            val path = BitmapTools.insertImage(contentResolver,finalImage,
+                            val path = BitmapTools.insertImage(contentResolver,rotatedBitmap,
                                     System.currentTimeMillis().toString()+"_profile.jpg","")
 
                             if(!TextUtils.isEmpty(path)){
