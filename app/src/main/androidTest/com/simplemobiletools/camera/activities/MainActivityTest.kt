@@ -56,7 +56,6 @@ class MainActivityTest {
 
         // Once the button advance camera is click, the smart hub appear with 4 buttons displayed
         onView(withId(R.id.qr_code)).check(matches(isDisplayed()))
-        onView(withId(R.id.math_hub)).check(matches(isDisplayed()))
         onView(withId(R.id.detect_object)).check(matches(isDisplayed()))
         onView(withId(R.id.image_filter)).check(matches(isDisplayed()))
 
@@ -88,4 +87,25 @@ class MainActivityTest {
         onView(withId(R.id.qr_code)).check(matches(isDisplayed()))
 
     }
+
+    @Test
+    fun imageFiltersTest() {
+        onView(withId(R.id.advanced_camera)).check(matches(isDisplayed()))
+
+        //click on the smarthub button
+        onView(withId(R.id.advanced_camera)).perform(click())
+
+        onView(withId(R.id.image_filter)).check(matches(isDisplayed()))
+
+        //click on the image filter button
+        onView(withId(R.id.image_filter)).perform(click())
+
+        //check that save and back buttons are displayed
+        onView(withId(R.id.tabs)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.tabsExit)).check(matches(isDisplayed()))
+
+    }
+
+
 }

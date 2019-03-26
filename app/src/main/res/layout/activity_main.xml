@@ -83,14 +83,6 @@
                 android:src="@drawable/ic_qr_code" />
 
             <ImageView
-                android:id="@+id/math_hub"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/smart_hub"
-                android:layout_weight="1"
-                android:src="@drawable/ic_shutter" />
-
-            <ImageView
                 android:id="@+id/detect_object"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"

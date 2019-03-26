@@ -71,7 +71,7 @@ import org.json.JSONObject
 import com.simplemobiletools.camera.extensions.OnSwipeTouchListener
 
 
-open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface {
+class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface {
 
     val GALLERY_PERMISSION = 1000
 
@@ -352,22 +352,22 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
 
         vibrator.vibrate(400);
 
-           this.lensMode = !this.lensMode
+        this.lensMode = !this.lensMode
 
-           if (this.lensMode){ // We're in lens mode now
-               fadeAnim(btn_holder, .0f)
-               fadeAnim(smart_hub_scroll, 1f)
-               // make bottom bar go away
-               // make advanced hub appear
+        if (this.lensMode){ // We're in lens mode now
+            fadeAnim(btn_holder, .0f)
+            fadeAnim(smart_hub_scroll, 1f)
+            // make bottom bar go away
+            // make advanced hub appear
 
-           } else { // we're in camera mode now
-               fadeAnim(btn_holder, 1f)
-               fadeAnim(smart_hub_scroll, .0f)
-               findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.VISIBLE);
-               // make advanced hub appear
-               // make bottom bar appear
+        } else { // we're in camera mode now
+            fadeAnim(btn_holder, 1f)
+            fadeAnim(smart_hub_scroll, .0f)
+            findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.VISIBLE);
+            // make advanced hub appear
+            // make bottom bar appear
 
-           }
+        }
 
 
     }
@@ -768,9 +768,14 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
 
     //Filter section
     private fun startFilter(){
+        video_rec_curr_timer.beGone()
+        Log.d("YANISTEST","TEAST THIS")
         setContentView(R.layout.filter_main)
+        Log.d("YANISTEST2","TEAST THIS")
         loadImage()
+        Log.d("YANISTEST3","TEAST THIS")
         setupViewPager(viewPager)
+        Log.d("YANISTES4","TEAST THIS")
     }
 
     private fun setupViewPager(viewPager: NonSwipeableViewPager?) {
