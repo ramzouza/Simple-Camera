@@ -41,6 +41,7 @@ open class KnowledgeGraphAdapter {
 
     fun constructQuery(term : String): String{
         val query = base_query + "?query=" + term.replace(" ","+") + "&limit=1" + "&key="+ api_key
+        System.out.println(query);
         return query
     }
 

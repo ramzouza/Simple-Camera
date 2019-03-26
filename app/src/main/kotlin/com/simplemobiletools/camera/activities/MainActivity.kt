@@ -394,9 +394,18 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
             // this handler is invoked after knowledgeGraph.getSearchResult is called.
             var dialogHandler = fun (detectedObj : String, response : JSONObject) {
                 Log.i("INFO", response.toString(4))
-                val jsonArray = response.getJSONArray("itemListElement").getJSONObject(0).getJSONObject("result").getJSONObject("detailedDescription");
-                val message = jsonArray.getString("articleBody");
-                val url = jsonArray.getString("url")
+
+                var message : String;
+                var url : String
+                try{
+                    val jsonArray = response.getJSONArray("itemListElement").getJSONObject(0).getJSONObject("result").getJSONObject("detailedDescription");
+                    message = jsonArray.getString("articleBody");
+                    url = jsonArray.getString("url")
+                } catch (e : Exception){
+                    message = "Hmm... I recognize the object but I cannot find any meaningful info about it.";
+                    url = "https://en.wikipedia.org/wiki/Special:Search?search=${detectedObj}&go=Go"
+                }
+
                 dialog.build("Detected Object: ${detectedObj}", message,
                         "Wikipedia",url,
                         "JSON", "JSON", response.toString(3));
