@@ -56,19 +56,15 @@ class SwipingTest {
         onView(withId(R.id.math_hub)).check(matches(isDisplayed()))
         onView(withId(R.id.detect_object)).check(matches(isDisplayed()))
         onView(withId(R.id.image_filter)).check(matches(isDisplayed()))
-    }
 
-    @Test
-    fun enableSwipingUpDownTest(){
-        // ensure that swiping is working
         onView(withId(R.id.swipe)).perform(swipeRight())
-
-        // Once the button advance camera is click, the smart hub appear with 4 buttons displayed
         onView(withId(R.id.qr_code)).check(matches(isDisplayed()))
-        onView(withId(R.id.math_hub)).check(matches(isDisplayed()))
-        onView(withId(R.id.detect_object)).check(matches(isDisplayed()))
-        onView(withId(R.id.image_filter)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.swipe)).perform(swipeUp())
+        onView(withId(R.id.settings_swipe)).check(matches(isDisplayed()))
+        Espresso.pressBack()
     }
+
 
 
 
