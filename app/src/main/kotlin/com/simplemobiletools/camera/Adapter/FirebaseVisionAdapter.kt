@@ -11,7 +11,7 @@ import com.simplemobiletools.commons.extensions.getLatestMediaId
 import com.simplemobiletools.commons.extensions.toast
 import java.io.IOException
 
-class FirebaseVisionAdapter {
+open class FirebaseVisionAdapter {
 
     private var context : Context
     constructor(context : Context){
