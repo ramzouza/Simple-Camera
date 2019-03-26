@@ -1,4 +1,4 @@
-# Simple Camera - SOEN 390 - [![Build Status](https://travis-ci.com/ramzouza/Simple-Camera.svg?token=anKBxVVwHNm5mtwR4sgc&branch=dev)](https://travis-ci.com/ramzouza/Simple-Camera)
+# Simple Camera - SOEN 390 - [![Build Status](https://travis-ci.com/ramzouza/Simple-Camera.svg?token=anKBxVVwHNm5mtwR4sgc&branch=dev](https://travis-ci.com/ramzouza/Simple-Camera)
 <img alt="Logo" src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="80" />
 
 ##  Collaborators
