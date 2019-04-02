@@ -70,6 +70,7 @@ import com.simplemobiletools.camera.Adapter.FirebaseVisionAdapter
 import com.simplemobiletools.camera.dialogs.SmartHubDialog
 import org.json.JSONObject
 import com.simplemobiletools.camera.extensions.OnSwipeTouchListener
+import com.simplemobiletools.camera.extensions.DoubleTapListener
 
 
 open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface {
@@ -329,8 +330,13 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
             }
         })
 
+        doubleTap.setOnTouchListener(object : DoubleTapListener(applicationContext) {
 
-
+            override fun onDoubleTap() {
+                // toast("I just flipped the switch")
+                toggleCamera()
+            }
+        })
 
     }
 
