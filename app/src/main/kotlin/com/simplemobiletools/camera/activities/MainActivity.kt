@@ -66,6 +66,7 @@ import java.util.*
 import java.io.IOException
 import kotlin.concurrent.schedule
 import com.android.volley.Response
+import com.google.firebase.perf.metrics.AddTrace
 import com.simplemobiletools.camera.Adapter.FirebaseVisionAdapter
 import com.simplemobiletools.camera.dialogs.SmartHubDialog
 import org.json.JSONObject
@@ -265,6 +266,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         }
     }
 
+    @AddTrace(name = "initCameraTrace", enabled = true /* optional */)
     private fun initializeCamera() {
         setContentView(R.layout.activity_main)
         initButtons()
@@ -295,6 +297,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         fadeAnim(smart_hub_scroll, .0f)
     }
 
+    @AddTrace(name = "initButtonsTrace", enabled = true /* optional */)
     private fun initButtons() {
 
         toggle_camera.setOnClickListener { toggleCamera() }
@@ -379,11 +382,13 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
 
     }
 
+    @AddTrace(name = "qrCodeTrace", enabled = true /* optional */)
     private fun qr_code(){
         val intent = Intent(applicationContext, ScanActivity::class.java)
         startActivity(intent)
     }
 
+    @AddTrace(name = "detectObjectTrace", enabled = true /* optional */)
     private fun detect_object(){
         mIsInPhotoMode = true;
         this.handleShutter();
@@ -783,6 +788,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     }
 
     //Filter section
+    @AddTrace(name = "filterTrace", enabled = true /* optional */)
     private fun startFilter(){
         video_rec_curr_timer.beGone()
         Log.d("YANISTEST","TEAST THIS")
