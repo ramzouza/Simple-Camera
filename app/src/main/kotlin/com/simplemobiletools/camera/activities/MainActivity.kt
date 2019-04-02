@@ -312,6 +312,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         qr_code!!.setOnClickListener { qr_code() }
         detect_object.setOnClickListener {detect_object()}
         image_filter.setOnClickListener { startFilter() }
+        meme_gen.setOnClickListener { meme_generator() }
 
         swipe.setOnTouchListener(object : OnSwipeTouchListener(applicationContext) {
 
@@ -430,6 +431,14 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
             // detect the object
             firebaseVisionAdapter.vision(file_uri, visionHandler)
         }
+    }
+
+    // Method to be implemented for the meme generator lens
+    // @AddTrace(name = "memeGeneratorTrace", enabled = true /* optional */)
+    private fun meme_generator() {
+        Toast.makeText(applicationContext,"Welcome to the meme generator!", Toast.LENGTH_SHORT).show()
+//        val intent = Intent(applicationContext, MemeActivity::class.java)
+//        startActivity(intent)
     }
 
     private fun getLastMediaPath() : String {
