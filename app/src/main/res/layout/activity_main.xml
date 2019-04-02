@@ -120,7 +120,7 @@
     <LinearLayout
         android:id="@+id/swipe"
         android:layout_width="450dp"
-        android:layout_height="325dp"
+        android:layout_height="200dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="100dp"
         android:layout_weight="1"
@@ -131,9 +131,9 @@
     <LinearLayout
         android:id="@+id/doubleTap"
         android:layout_width="450dp"
-        android:layout_height="match_parent"
+        android:layout_height="150dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="300dp"
         android:layout_weight="1"
         android:gravity="clip_vertical|center_horizontal"
         android:orientation="horizontal"
