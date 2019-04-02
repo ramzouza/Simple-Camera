@@ -99,12 +99,12 @@
                 android:src="@drawable/ic_img_filter" />
 
             <ImageView
-                android:id="@+id/Futur_feature5"
+                android:id="@+id/meme_gen"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="@dimen/normal_margin"
-                android:src="@drawable/ic_plus" />
+                android:src="@drawable/ic_meme" />
 
             <ImageView
                 android:id="@+id/Futur_feature6"
