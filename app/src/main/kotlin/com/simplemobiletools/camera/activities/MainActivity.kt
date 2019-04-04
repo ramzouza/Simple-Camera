@@ -1,8 +1,6 @@
 package com.simplemobiletools.camera.activities
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.DialogInterface
 import android.content.Intent
 import android.hardware.SensorManager
 import android.net.Uri
@@ -12,17 +10,13 @@ import android.provider.MediaStore
 import android.view.*
 import android.graphics.Bitmap
 
-import android.graphics.BitmapFactory
 import android.graphics.Matrix
 //import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.os.Vibrator
-import android.text.Html
 import android.text.TextUtils
 import android.util.Log
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -49,32 +43,30 @@ import com.simplemobiletools.camera.views.FocusCircleView
 import com.simplemobiletools.commons.extensions.*
 import com.simplemobiletools.commons.helpers.*
 import com.simplemobiletools.commons.models.Release
-import android.view.MenuItem
-import androidx.appcompat.widget.Toolbar
-import com.google.android.material.tabs.TabLayout
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel
 import com.simplemobiletools.camera.Adapter.KnowledgeGraphAdapter
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.dialog_change_resolution.view.*
 import com.simplemobiletools.camera.interfaces.FilterListInterface
 import com.zomato.photofilters.imageprocessors.Filter
 import kotlinx.android.synthetic.main.filter_content.*
 import kotlinx.android.synthetic.main.filter_main.*
 import java.util.*
-import java.io.IOException
 import kotlin.concurrent.schedule
-import com.android.volley.Response
 import com.google.firebase.perf.metrics.AddTrace
 import com.simplemobiletools.camera.Adapter.FirebaseVisionAdapter
+import com.simplemobiletools.camera.debug.TextFragment
 import com.simplemobiletools.camera.dialogs.SmartHubDialog
 import org.json.JSONObject
 import com.simplemobiletools.camera.extensions.OnSwipeTouchListener
 import com.simplemobiletools.camera.extensions.DoubleTapListener
+import com.simplemobiletools.camera.interfaces.AddTextFragmentListener
+import ja.burhanrashid52.photoeditor.PhotoEditor
+import kotlinx.android.synthetic.main.fragment_add_text.*
 
 
-open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface {
+open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface, AddTextFragmentListener {
+    override fun onAddTextListener(text: String, color: Int) {
+        photoEditor.addText(text,color)
+    }
 
     val GALLERY_PERMISSION = 1000
 
@@ -90,8 +82,11 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     internal var originalImage:Bitmap?=null
     internal lateinit var filteredImage:Bitmap
     internal lateinit var finalImage:Bitmap
-
     internal lateinit var filteredList: FilterList
+    internal lateinit var textFragment: TextFragment
+    internal lateinit var photoEditor : PhotoEditor
+
+
 
     private var filterMenu: Menu? = null
 
@@ -112,6 +107,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     private var mCurrVideoRecTimer = 0
     var mLastHandledOrientation = 0
     private var lensMode = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
@@ -192,6 +188,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         mCurrVideoRecTimer = 0
         mLastHandledOrientation = 0
         mCameraImpl = MyCameraImpl(applicationContext)
+        textFragment = TextFragment.getInstance()
 
 
         if (config.alwaysOpenBackCamera) {
@@ -313,6 +310,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         detect_object.setOnClickListener {detect_object()}
         image_filter.setOnClickListener { startFilter() }
         meme_gen.setOnClickListener { meme_generator() }
+
 
         swipe.setOnTouchListener(object : OnSwipeTouchListener(applicationContext) {
 
@@ -439,7 +437,19 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         Toast.makeText(applicationContext,"Welcome to the meme generator!", Toast.LENGTH_SHORT).show()
 //        val intent = Intent(applicationContext, MemeActivity::class.java)
 //        startActivity(intent)
+        video_rec_curr_timer.beGone()
+        setContentView(R.layout.filter_main)
+        photoEditor = PhotoEditor.Builder(this@MainActivity,image_preview).setPinchTextScalable(true).build()
+        loadImage()
+//        setupViewPager(viewPager) // this sets the thumbnail
+        if(textFragment !=null){
+            textFragment.setListener(this@MainActivity)
+            textFragment.show(supportFragmentManager,textFragment.tag)
+        }
+
     }
+
+
 
     private fun getLastMediaPath() : String {
         if (mPreviewUri != null) {
@@ -835,7 +845,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
 
 
 
-        image_preview.setImageBitmap(originalImage)
+        image_preview.source.setImageBitmap(originalImage)
         image_preview.setRotation(90F)
         tabs.setOnClickListener{saveImageToGallery()}
         tabsExit.setOnClickListener({startActivity(Intent(this, MainActivity::class.java))})
@@ -906,13 +916,13 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
             bitmap.recycle()
 
             filteredList.displayImage(bitmap,data!!.data!!)
-            image_preview.setImageBitmap(filteredImage)
+            image_preview.source.setImageBitmap(filteredImage)
         }
     }
 
     override fun onFilterSelected(filter: Filter) {
         filteredImage = originalImage!!.copy(Bitmap.Config.ARGB_8888,true)
-        image_preview.setImageBitmap(filter.processFilter(filteredImage))
+        image_preview.source.setImageBitmap(filter.processFilter(filteredImage))
         finalImage = filteredImage.copy(Bitmap.Config.ARGB_8888,true)
     }
 

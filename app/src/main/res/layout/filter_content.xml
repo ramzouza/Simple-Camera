@@ -13,7 +13,7 @@
     tools:showIn="@layout/filter_main"
     >
 
-    <ImageView
+    <ja.burhanrashid52.photoeditor.PhotoEditorView
         android:id="@+id/image_preview"
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
