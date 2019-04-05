@@ -17,6 +17,7 @@ import android.os.Vibrator
 import android.text.TextUtils
 import android.util.Log
 import android.widget.*
+import androidx.cardview.widget.CardView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -59,6 +60,7 @@ import org.json.JSONObject
 import com.simplemobiletools.camera.extensions.OnSwipeTouchListener
 import com.simplemobiletools.camera.extensions.DoubleTapListener
 import com.simplemobiletools.camera.interfaces.AddTextFragmentListener
+import ja.burhanrashid52.photoeditor.OnSaveBitmap
 import ja.burhanrashid52.photoeditor.PhotoEditor
 import kotlinx.android.synthetic.main.fragment_add_text.*
 
@@ -85,6 +87,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     internal lateinit var filteredList: FilterList
     internal lateinit var textFragment: TextFragment
     internal lateinit var photoEditor : PhotoEditor
+    internal lateinit var addTextFragment: AddTextFragment
 
 
 
@@ -308,8 +311,8 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         change_resolution.setOnClickListener { mPreview?.showChangeResolutionDialog() }
         qr_code!!.setOnClickListener { qr_code() }
         detect_object.setOnClickListener {detect_object()}
-        image_filter.setOnClickListener { startFilter() }
-        meme_gen.setOnClickListener { meme_generator() }
+        image_filter.setOnClickListener { startFilter("Filter") }
+        meme_gen.setOnClickListener { startFilter("memeGen") }
 
 
         swipe.setOnTouchListener(object : OnSwipeTouchListener(applicationContext) {
@@ -433,21 +436,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
 
     // Method to be implemented for the meme generator lens
     // @AddTrace(name = "memeGeneratorTrace", enabled = true /* optional */)
-    private fun meme_generator() {
-        Toast.makeText(applicationContext,"Welcome to the meme generator!", Toast.LENGTH_SHORT).show()
-//        val intent = Intent(applicationContext, MemeActivity::class.java)
-//        startActivity(intent)
-        video_rec_curr_timer.beGone()
-        setContentView(R.layout.filter_main)
-        photoEditor = PhotoEditor.Builder(this@MainActivity,image_preview).setPinchTextScalable(true).build()
-        loadImage()
-//        setupViewPager(viewPager) // this sets the thumbnail
-        if(textFragment !=null){
-            textFragment.setListener(this@MainActivity)
-            textFragment.show(supportFragmentManager,textFragment.tag)
-        }
 
-    }
 
 
 
@@ -808,15 +797,42 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
 
     //Filter section
     @AddTrace(name = "filterTrace", enabled = true /* optional */)
-    private fun startFilter(){
+    private fun startFilter(type:String){
         video_rec_curr_timer.beGone()
-        Log.d("YANISTEST","TEAST THIS")
         setContentView(R.layout.filter_main)
-        Log.d("YANISTEST2","TEAST THIS")
+        photoEditor = PhotoEditor.Builder(this@MainActivity,image_preview).setPinchTextScalable(true).build()
         loadImage()
-        Log.d("YANISTEST3","TEAST THIS")
-        setupViewPager(viewPager)
-        Log.d("YANISTES4","TEAST THIS")
+
+        //Put all Button to Gone
+        findViewById<CardView>(R.id.btn_filters).setVisibility(View.GONE)
+        findViewById<CardView>(R.id.btn_text).setVisibility(View.GONE)
+        if(type == "Filter"){
+            findViewById<CardView>(R.id.btn_filters).setVisibility(View.VISIBLE)
+            filteredList = FilterList.getInstance()
+            btn_filters.setOnClickListener {
+                if(filteredList != null){
+                    filteredList.setListener(this@MainActivity)
+                    filteredList.show(supportFragmentManager,filteredList.tag)
+                }
+            }
+        }
+        if(type == "memeGen"){
+            findViewById<CardView>(R.id.btn_text).setVisibility(View.VISIBLE)
+            addTextFragment = AddTextFragment.getInstance()
+
+
+            btn_text.setOnClickListener{
+                if(addTextFragment != null){
+                    addTextFragment.setListener(this@MainActivity)
+                    addTextFragment.show(supportFragmentManager,addTextFragment.tag)
+                }
+            }
+        }
+
+
+
+
+
     }
 
     private fun setupViewPager(viewPager: NonSwipeableViewPager?) {
@@ -873,18 +889,36 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
                 .withListener(object: MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         if(report!!.areAllPermissionsGranted()){
-                            val path = BitmapTools.insertImage(contentResolver,rotatedBitmap,
-                                    System.currentTimeMillis().toString()+"_profile.jpg","")
 
-                            if(!TextUtils.isEmpty(path)){
+                            photoEditor.saveAsBitmap(object :OnSaveBitmap{
+                                override fun onFailure(e: java.lang.Exception?) {
+                                    val snackBar = Snackbar.make(coordinator,e!!.message.toString(),Snackbar.LENGTH_LONG)
+                                    snackBar.show()
+                                }
 
-                                val snackBar = Snackbar.make(coordinator,"Image saved to gallery",Snackbar.LENGTH_LONG)
+                                override fun onBitmapReady(saveBitmap: Bitmap?) {
 
-                                snackBar.show()
-                            }
-                            else{
-                                val snackBar = Snackbar.make(coordinator,"Unable to save image",Snackbar.LENGTH_LONG)
-                            }
+                                    val scaledBitmap = Bitmap.createScaledBitmap(saveBitmap, saveBitmap!!.width, saveBitmap!!.height, true)
+
+                                    val rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.width, scaledBitmap.height, matrix, true)
+
+                                    val path = BitmapTools.insertImage(contentResolver,rotatedBitmap,
+                                            System.currentTimeMillis().toString()+"_profile.jpg","")
+
+                                    if(!TextUtils.isEmpty(path)){
+
+                                        val snackBar = Snackbar.make(coordinator,"Image saved to gallery",Snackbar.LENGTH_LONG)
+
+                                        snackBar.show()
+                                    }
+                                    else{
+                                        val snackBar = Snackbar.make(coordinator,"Unable to save image",Snackbar.LENGTH_LONG)
+                                    }
+                                }
+
+                            })
+
+
                         }
                         else
                             Toast.makeText(applicationContext,"Permission denied", Toast.LENGTH_SHORT).show()
