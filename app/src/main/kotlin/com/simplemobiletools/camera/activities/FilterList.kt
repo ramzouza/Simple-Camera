@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.simplemobiletools.camera.Adapter.ThumbnailAdapter
 import com.simplemobiletools.camera.R
 import com.simplemobiletools.camera.interfaces.FilterListInterface
@@ -30,11 +31,22 @@ import kotlinx.android.synthetic.main.filter_list.*
  * A simple [Fragment] subclass.
  *
  */
-class FilterList : Fragment(),FilterListInterface {
+class FilterList : BottomSheetDialogFragment(),FilterListInterface {
     internal lateinit var recycler_view: RecyclerView
     internal var listener : FilterListInterface ?=null
     internal lateinit var adapter:ThumbnailAdapter
     internal lateinit var thumbnailItemList: MutableList<ThumbnailItem>
+
+    companion object {
+        internal var instance:FilterList?=null
+
+        fun getInstance():FilterList{
+            if(instance == null){
+                instance = FilterList()
+            }
+            return instance!!
+        }
+    }
 
     fun setListener(listFragmentListener: FilterListInterface){
         this.listener = listFragmentListener

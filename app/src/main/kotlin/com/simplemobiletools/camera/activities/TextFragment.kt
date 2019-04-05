@@ -37,18 +37,9 @@ class TextFragment : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        val itemView =  inflater.inflate(R.layout.fragment_add_text, container, false)
-
-        edit_add_text = itemView.findViewById<EditText>(R.id.edit_add_text)
-        btn_done = itemView.findViewById<Button>(R.id.btn_add_text)
+        return  inflater.inflate(R.layout.fragment_add_text, container, false)
 
 
-        //Event
-        btn_done!!.setOnClickListener{
-            listener!!.onAddTextListener(edit_add_text!!.text.toString(),0)
-        }
-
-        return itemView
     }
 
 
