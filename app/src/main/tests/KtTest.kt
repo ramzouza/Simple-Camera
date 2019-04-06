@@ -145,6 +145,10 @@ public class KtUnitTests() {
         assertEquals(1,2);
     }
 
+    @Test
+    fun failingTest2(){
+        assert(false);
+    }
 
 
 
