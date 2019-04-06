@@ -11,6 +11,7 @@ import android.view.*
 import android.graphics.Bitmap
 
 import android.graphics.Matrix
+import android.graphics.Typeface
 //import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.os.Vibrator
@@ -66,8 +67,8 @@ import kotlinx.android.synthetic.main.fragment_add_text.*
 
 
 open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface, AddTextFragmentListener {
-    override fun onAddTextListener(text: String, color: Int) {
-        photoEditor.addText(text,color)
+    override fun onAddTextListener(typeFace:Typeface,text: String, color: Int) {
+        photoEditor.addText(typeFace,text,color)
     }
 
     val GALLERY_PERMISSION = 1000
