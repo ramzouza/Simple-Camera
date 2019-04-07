@@ -120,8 +120,10 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     private var lensMode = false
 
 
+
     var adapter:PostsAdapter?=null
     val features : ArrayList<ModelRecyclerView> = ArrayList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
@@ -384,7 +386,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     private fun toggleLens() {
 
         //this.toast("Advanced Mode")
-        findViewById<HorizontalScrollView>(R.id.smart_hub_scroll).setVisibility(View.VISIBLE);
+        findViewById<RecyclerView>(R.id.smart_hub_scroll).setVisibility(View.VISIBLE);
 
         findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.GONE);
 
@@ -415,13 +417,13 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     }
 
     @AddTrace(name = "qrCodeTrace", enabled = true /* optional */)
-    private fun qr_code(){
+     fun qr_code(){
         val intent = Intent(applicationContext, ScanActivity::class.java)
         startActivity(intent)
     }
 
     @AddTrace(name = "detectObjectTrace", enabled = true /* optional */)
-    private fun detect_object(){
+     fun detect_object(){
         mIsInPhotoMode = true;
         this.handleShutter();
 
@@ -827,7 +829,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
 
     //Filter section
     @AddTrace(name = "filterTrace", enabled = true /* optional */)
-    private fun startFilter(type:String){
+     fun startFilter(type:String){
         video_rec_curr_timer.beGone()
         setContentView(R.layout.filter_main)
         photoEditor = PhotoEditor.Builder(this@MainActivity,image_preview).setPinchTextScalable(true).build()
