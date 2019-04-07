@@ -402,6 +402,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         if (this.lensMode){ // We're in lens mode now
             fadeAnim(btn_holder, .0f)
             fadeAnim(smart_hub_scroll, 1f)
+            findViewById<RecyclerView>(R.id.smart_hub_scroll).setVisibility(View.VISIBLE);
             // make bottom bar go away
             // make advanced hub appear
 
@@ -409,6 +410,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
             fadeAnim(btn_holder, 1f)
             fadeAnim(smart_hub_scroll, .0f)
             findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.VISIBLE);
+            findViewById<RecyclerView>(R.id.smart_hub_scroll).setVisibility(View.GONE);
             // make advanced hub appear
             // make bottom bar appear
 
