@@ -101,22 +101,40 @@
     </HorizontalScrollView>
 
 
-    <Button
+    <androidx.cardview.widget.CardView
         android:id="@+id/tabsExit"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignLeft="@+id/tabs"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="50dp"
-
         android:layout_marginBottom="51dp"
-        android:background="@color/md_red_100_dark"
-        android:text="BACK"
-        app:tabGravity="fill">
+        android:padding="16dp"
+        app:cardBackgroundColor="@color/color_background">
 
-    </Button>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:orientation="vertical">
 
-    <Button
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_arrow_back_white_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Back"
+                android:textColor="@android:color/white"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/tabs"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -125,13 +143,29 @@
 
         android:layout_marginStart="2dp"
         android:layout_marginBottom="51dp"
-        android:background="@color/md_blue_200_dark"
-        android:text="SAVE"
-        app:tabGravity="fill">
+        app:cardBackgroundColor="@color/color_background">
 
-    </Button>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:orientation="vertical">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_save_white_24dp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:textColor="@android:color/white"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 
 </RelativeLayout>
