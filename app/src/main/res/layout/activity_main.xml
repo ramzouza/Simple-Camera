@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/view_holder"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:background="@android:color/black"
+    android:layout_alignParentTop="true">
+
 
 
     <com.simplemobiletools.camera.views.AutoFitTextureView
@@ -11,12 +15,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/test"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="675dp"
         android:gravity="center_horizontal|top">
 
 
@@ -26,8 +28,13 @@
             android:layout_height="@dimen/icon_size"
             android:layout_below="@+id/settings"
             android:layout_alignParentRight="true"
+            android:layout_marginEnd="22dp"
             android:padding="@dimen/normal_margin"
-            android:src="@drawable/ic_video" />
+            android:src="@drawable/ic_video"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/last_photo_video_preview"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
             android:id="@+id/change_resolution"
@@ -35,8 +42,13 @@
             android:layout_height="@dimen/icon_size"
             android:layout_below="@+id/toggle_photo_video"
             android:layout_alignParentRight="true"
+            android:layout_marginEnd="19dp"
             android:padding="@dimen/normal_margin"
-            android:src="@drawable/ic_resolution" />
+            android:src="@drawable/ic_resolution"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/toggle_photo_video"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
             android:id="@+id/last_photo_video_preview"
@@ -44,7 +56,12 @@
             android:layout_height="@dimen/icon_size"
             android:layout_below="@+id/advanced_camera"
             android:layout_alignParentRight="true"
-            android:padding="@dimen/medium_margin" />
+            android:layout_marginEnd="22dp"
+            android:padding="@dimen/medium_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/advanced_camera"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
             android:id="@+id/advanced_camera"
@@ -52,32 +69,41 @@
             android:layout_height="@dimen/icon_size"
             android:layout_below="@+id/change_resolution"
             android:layout_alignParentRight="true"
+            android:layout_marginEnd="15dp"
             android:padding="@dimen/medium_margin"
-            android:src="@drawable/ic_smart_lens" />
+            android:src="@drawable/ic_smart_lens"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
         <ImageView
             android:id="@+id/settings"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:layout_alignParentRight="true"
-            android:paddingLeft="30dp"
+            android:layout_marginEnd="18dp"
             android:padding="@dimen/normal_margin"
-            android:src="@drawable/ic_settings_cog" />
-    </LinearLayout>
+            android:paddingLeft="30dp"
+            android:src="@drawable/ic_settings_cog"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/change_resolution"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
 
 
     <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/smart_hub_scroll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="25dp"
-            android:orientation="horizontal">
-        </androidx.recyclerview.widget.RecyclerView>
-
+        android:id="@+id/smart_hub_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:orientation="horizontal">
+    </androidx.recyclerview.widget.RecyclerView>
 
 
     <LinearLayout
