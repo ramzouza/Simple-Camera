@@ -11,51 +11,65 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <ImageView
-        android:id="@+id/settings"
-        android:layout_width="@dimen/icon_size"
-        android:layout_height="@dimen/icon_size"
-        android:layout_alignParentRight="true"
-        android:padding="@dimen/normal_margin"
-        android:src="@drawable/ic_settings_cog" />
-
-    <ImageView
-        android:id="@+id/toggle_photo_video"
-        android:layout_width="@dimen/icon_size"
-        android:layout_height="@dimen/icon_size"
-        android:layout_below="@+id/settings"
-        android:layout_alignParentRight="true"
-        android:padding="@dimen/normal_margin"
-        android:src="@drawable/ic_video" />
-
-    <ImageView
-        android:id="@+id/change_resolution"
-        android:layout_width="@dimen/icon_size"
-        android:layout_height="@dimen/icon_size"
-        android:layout_below="@+id/toggle_photo_video"
-        android:layout_alignParentRight="true"
-        android:padding="@dimen/normal_margin"
-        android:src="@drawable/ic_resolution" />
-
-    <ImageView
-        android:id="@+id/last_photo_video_preview"
-        android:layout_width="@dimen/icon_size"
-        android:layout_height="@dimen/icon_size"
-        android:layout_below="@+id/advanced_camera"
-        android:layout_alignParentRight="true"
-        android:padding="@dimen/medium_margin" />
-
-    <ImageView
-        android:id="@+id/advanced_camera"
-        android:layout_width="@dimen/icon_size"
-        android:layout_height="@dimen/icon_size"
-        android:layout_below="@+id/change_resolution"
-        android:layout_alignParentRight="true"
-        android:padding="@dimen/medium_margin"
-        android:src="@drawable/ic_smart_lens" />
+    <LinearLayout
+        android:id="@+id/test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="675dp"
+        android:gravity="center_horizontal|top">
 
 
-        <androidx.recyclerview.widget.RecyclerView
+        <ImageView
+            android:id="@+id/toggle_photo_video"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:layout_below="@+id/settings"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/normal_margin"
+            android:src="@drawable/ic_video" />
+
+        <ImageView
+            android:id="@+id/change_resolution"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:layout_below="@+id/toggle_photo_video"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/normal_margin"
+            android:src="@drawable/ic_resolution" />
+
+        <ImageView
+            android:id="@+id/last_photo_video_preview"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:layout_below="@+id/advanced_camera"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/medium_margin" />
+
+        <ImageView
+            android:id="@+id/advanced_camera"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:layout_below="@+id/change_resolution"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/medium_margin"
+            android:src="@drawable/ic_smart_lens" />
+
+        <ImageView
+            android:id="@+id/settings"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="30dp"
+            android:padding="@dimen/normal_margin"
+            android:src="@drawable/ic_settings_cog" />
+    </LinearLayout>
+
+
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/smart_hub_scroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
