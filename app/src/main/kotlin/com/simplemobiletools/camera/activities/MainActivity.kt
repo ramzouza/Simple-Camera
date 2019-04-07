@@ -11,6 +11,7 @@ import android.view.*
 import android.graphics.Bitmap
 
 import android.graphics.Matrix
+import android.media.Image
 import android.graphics.Typeface
 //import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -32,7 +33,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.simplemobiletools.camera.Adapter.ViewConnection
 import com.simplemobiletools.camera.BuildConfig
-import com.simplemobiletools.camera.R
+
 import com.simplemobiletools.camera.Utils.BitmapTools
 import com.simplemobiletools.camera.Utils.NonSwipeableViewPager
 import com.simplemobiletools.camera.extensions.config
@@ -45,20 +46,26 @@ import com.simplemobiletools.camera.views.FocusCircleView
 import com.simplemobiletools.commons.extensions.*
 import com.simplemobiletools.commons.helpers.*
 import com.simplemobiletools.commons.models.Release
+import androidx.recyclerview.widget.*
 import com.simplemobiletools.camera.Adapter.KnowledgeGraphAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import com.simplemobiletools.camera.interfaces.FilterListInterface
 import com.zomato.photofilters.imageprocessors.Filter
 import kotlinx.android.synthetic.main.filter_content.*
 import kotlinx.android.synthetic.main.filter_main.*
+import kotlinx.android.synthetic.main.features.*
 import java.util.*
 import kotlin.concurrent.schedule
 import com.google.firebase.perf.metrics.AddTrace
 import com.simplemobiletools.camera.Adapter.FirebaseVisionAdapter
+import com.simplemobiletools.camera.Adapter.PostsAdapter
+import com.simplemobiletools.camera.R
 import com.simplemobiletools.camera.debug.TextFragment
 import com.simplemobiletools.camera.dialogs.SmartHubDialog
 import org.json.JSONObject
 import com.simplemobiletools.camera.extensions.OnSwipeTouchListener
+import com.simplemobiletools.camera.models.ModelRecyclerView
+import kotlin.collections.ArrayList
 import com.simplemobiletools.camera.extensions.DoubleTapListener
 import com.simplemobiletools.camera.interfaces.AddTextFragmentListener
 import ja.burhanrashid52.photoeditor.OnSaveBitmap
@@ -113,6 +120,8 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     private var lensMode = false
 
 
+    var adapter:PostsAdapter?=null
+    val features : ArrayList<ModelRecyclerView> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
@@ -129,6 +138,26 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         supportActionBar?.hide()
         checkWhatsNewDialog()
         setupOrientationEventListener()
+
+
+
+        var name_list = arrayOf("QR Code ","Photo Filters","Detect Object","Meme Generator" , "Feature 5")
+        var image_list = arrayOf(R.drawable.ic_qr_code,R.drawable.ic_img_filter,R.drawable.ic_detect_obj,R.drawable.ic_meme,R.drawable.ic_plus)
+
+
+        for(i in 0..name_list.size-1){
+            features.add(ModelRecyclerView(name_list[i],image_list[i]))
+        }
+
+
+        smart_hub_scroll.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false)
+        smart_hub_scroll.adapter = PostsAdapter(features,this)
+
+
+        val snapHelper : SnapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(smart_hub_scroll)
+
+
     }
 
     override fun onResume() {
@@ -310,10 +339,10 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         settings.setOnClickListener { launchSettings() }
         toggle_photo_video.setOnClickListener { handleTogglePhotoVideo() }
         change_resolution.setOnClickListener { mPreview?.showChangeResolutionDialog() }
-        qr_code!!.setOnClickListener { qr_code() }
-        detect_object.setOnClickListener {detect_object()}
-        image_filter.setOnClickListener { startFilter("Filter") }
-        meme_gen.setOnClickListener { startFilter("memeGen") }
+     //   qr_code!!.setOnClickListener { qr_code() }
+       // detect_object.setOnClickListener {detect_object()}
+        //image_filter.setOnClickListener { startFilter("Filter") }
+        //meme_gen.setOnClickListener { startFilter("memeGen") }
 
 
         swipe.setOnTouchListener(object : OnSwipeTouchListener(applicationContext) {
