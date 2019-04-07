@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/qr_code"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:adjustViewBounds="false"
+        android:cropToPadding="false"
+        android:padding="@dimen/normal_margin"
+        android:src="@drawable/ic_qr_code" />
+
+    <ImageView
+        android:id="@+id/detect_object"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="@dimen/normal_margin"
+        android:src="@drawable/ic_detect_obj" />
+
+    <ImageView
+        android:id="@+id/image_filter"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="@dimen/normal_margin"
+        android:src="@drawable/ic_img_filter" />
+
+    <ImageView
+        android:id="@+id/Futur_feature5"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="@dimen/normal_margin"
+        android:src="@drawable/ic_plus" />
+
+    <ImageView
+        android:id="@+id/Futur_feature6"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="@dimen/normal_margin"
+        android:src="@drawable/ic_plus" />
+
+</LinearLayout>
