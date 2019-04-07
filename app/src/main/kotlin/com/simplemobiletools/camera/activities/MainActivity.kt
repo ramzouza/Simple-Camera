@@ -686,7 +686,8 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         fadeAnim(settings, .5f)
         fadeAnim(toggle_photo_video, .0f)
         fadeAnim(change_resolution, .0f)
-        fadeAnim(last_photo_video_preview, .0f)
+       //fadeAnim(last_photo_video_preview, .0f)
+        fadeAnim(toggle_flash, .0f)
         fadeAnim(advanced_camera, .0f)
     }
 
@@ -694,7 +695,8 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         fadeAnim(settings, 1f)
         fadeAnim(toggle_photo_video, 1f)
         fadeAnim(change_resolution, 1f)
-        fadeAnim(last_photo_video_preview, 1f)
+        //fadeAnim(last_photo_video_preview, 1f)
+        fadeAnim(toggle_flash, 1f)
         fadeAnim(advanced_camera, 1f)
         scheduleFadeOut()
     }

@@ -32,7 +32,7 @@
             android:padding="@dimen/normal_margin"
             android:src="@drawable/ic_video"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/last_photo_video_preview"
+            app:layout_constraintEnd_toStartOf="@+id/toggle_flash"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
@@ -51,7 +51,7 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
-            android:id="@+id/last_photo_video_preview"
+            android:id="@+id/toggle_flash"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:layout_below="@+id/advanced_camera"
@@ -90,11 +90,8 @@
             app:layout_constraintEnd_toStartOf="@+id/change_resolution"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/smart_hub_scroll"
@@ -104,7 +101,6 @@
         android:layout_marginBottom="25dp"
         android:orientation="horizontal">
     </androidx.recyclerview.widget.RecyclerView>
-
 
     <LinearLayout
         android:id="@+id/swipe"
@@ -153,7 +149,7 @@
             android:src="@drawable/ic_shutter" />
 
         <ImageView
-            android:id="@+id/toggle_flash"
+            android:id="@+id/last_photo_video_preview"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:layout_weight="1"
