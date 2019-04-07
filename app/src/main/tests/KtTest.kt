@@ -18,6 +18,7 @@ import com.google.android.gms.vision.label.ImageLabel
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel
 import com.simplemobiletools.camera.Adapter.FirebaseVisionAdapter
 import com.simplemobiletools.camera.Adapter.KnowledgeGraphAdapter
+import com.simplemobiletools.camera.Utils.isHyperlink
 import com.simplemobiletools.camera.activities.MainActivity
 import com.simplemobiletools.camera.activities.SimpleActivity
 import junit.framework.Assert.assertEquals
@@ -137,6 +138,18 @@ public class KtUnitTests() {
         val best = adapter.findBest(collection);
 
         assertEquals(null, best);
+    }
+
+    @Test
+    fun hyperlinkTest(){
+        val links : Array<String> = arrayOf(
+                "https://www.youtube.com/watch?v=HaRQaDjKShA",
+                "https://github.com/ramzouza/Simple-Camera/commit/dc3b8d800c6d37f3509de6153d644f4ce7955f1a",
+                "http://zetcode.com/kotlin/arrays/"
+        )
+        for (link in links){
+            assert(isHyperlink(link))
+        }
     }
 
 

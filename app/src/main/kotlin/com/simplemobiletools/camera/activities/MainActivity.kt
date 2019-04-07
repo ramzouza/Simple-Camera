@@ -60,6 +60,7 @@ import com.google.firebase.perf.metrics.AddTrace
 import com.simplemobiletools.camera.Adapter.FirebaseVisionAdapter
 import com.simplemobiletools.camera.Adapter.PostsAdapter
 import com.simplemobiletools.camera.R
+import com.simplemobiletools.camera.Utils.isHyperlink
 import com.simplemobiletools.camera.debug.TextFragment
 import com.simplemobiletools.camera.dialogs.SmartHubDialog
 import org.json.JSONObject
@@ -143,8 +144,8 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
 
 
 
-        var name_list = arrayOf("QR Code ","Photo Filters","Detect Object","Meme Generator" , "Feature 5")
-        var image_list = arrayOf(R.drawable.ic_qr_code,R.drawable.ic_img_filter,R.drawable.ic_detect_obj,R.drawable.ic_meme,R.drawable.ic_plus)
+        var name_list = arrayOf("QR Code ","Photo Filters","Detect Object","Meme Generator" , "Hyperlink Scanner")
+        var image_list = arrayOf(R.drawable.ic_qr_code,R.drawable.ic_img_filter,R.drawable.ic_detect_obj,R.drawable.ic_meme, R.drawable.ic_arrow_right)
 
 
         for(i in 0..name_list.size-1){
@@ -422,6 +423,34 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         startActivity(intent)
     }
 
+    @AddTrace(name = "hyperlinkScannerTrace", enabled = true /* optional */)
+    public fun scan_hyperlink() {
+        mIsInPhotoMode = true;
+        this.handleShutter();
+        Timer().schedule(1500) {
+            val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI // external URI
+            val lastMediaId = this@MainActivity.getLatestMediaId(uri) // get latest image ID
+            val file_uri = Uri.withAppendedPath(uri, lastMediaId.toString()) // get file uri
+
+            val firebaseVisionAdapter = FirebaseVisionAdapter(this@MainActivity) // set up firebase detect object
+            firebaseVisionAdapter.visionText(file_uri, fun (result: String) {
+                val words = result.split(" ","\n");
+                val list : ArrayList<String> = ArrayList<String>();
+                for (word in words){
+                    if (isHyperlink(word)){
+                        toast(word)
+                        list.add(word)
+                    }
+                }
+                toast(list.size.toString());
+                if (list.size > 0) SmartHubDialog(this@MainActivity).build("Hyperlinks Detected", "The following hyperlink was detected: " + list[0],"Visit Hyperlink",list[0],"Copy to Clipboard","hyperlink",list[0])
+                else toast("Unfortunately, no hyperlink was recognized in the text you scanned.")
+            })
+        }
+    }
+
+
+
     @AddTrace(name = "detectObjectTrace", enabled = true /* optional */)
      fun detect_object(){
         mIsInPhotoMode = true;
@@ -462,7 +491,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
             }
 
             // detect the object
-            firebaseVisionAdapter.vision(file_uri, visionHandler)
+            firebaseVisionAdapter.visionLabel(file_uri, visionHandler)
         }
     }
 

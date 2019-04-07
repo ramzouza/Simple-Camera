@@ -18,7 +18,7 @@ open class FirebaseVisionAdapter {
         this.context = context
     }
 
-    fun vision(file_uri : Uri, handler : (best : String) -> Unit){
+    fun visionLabel(file_uri : Uri, handler : (best : String) -> Unit){
         val image: FirebaseVisionImage
 
         try {
@@ -32,6 +32,22 @@ open class FirebaseVisionAdapter {
                     context.toast(best.text)
                     handler(best.text);
                 };
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun visionText(file_uri: Uri, handler: (result : String) -> Unit){
+        val image: FirebaseVisionImage
+
+        try {
+            image = FirebaseVisionImage.fromFilePath(context, file_uri)
+            val detector = FirebaseVision.getInstance().getCloudDocumentTextRecognizer();
+            detector.processImage(image).addOnSuccessListener { result ->
+                val resultText = result.text
+                Log.i("INFO", resultText);
+                handler(resultText);
             }
         } catch (e: IOException) {
             e.printStackTrace()

@@ -54,6 +54,8 @@ class PostsAdapter (dataModel:ArrayList<ModelRecyclerView>, context : Context): 
                     (mContext as MainActivity).detect_object()
                 }else if(pos==3){
                     (mContext as MainActivity).startFilter("memeGen")
+                } else if (pos == 4){
+                    (mContext as MainActivity).scan_hyperlink();
                 }
             }
 
