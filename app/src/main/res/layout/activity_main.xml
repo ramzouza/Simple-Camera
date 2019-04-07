@@ -54,75 +54,26 @@
         android:padding="@dimen/medium_margin"
         android:src="@drawable/ic_smart_lens" />
 
-    <HorizontalScrollView
-        android:id="@+id/smart_hub_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_holder"
-        android:layout_alignParentBottom="true"
-        android:fillViewport="false"
-        android:gravity="center_horizontal|bottom"
-        android:visibility="gone">
 
-        <LinearLayout
-            android:id="@+id/smart_hub"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/smart_hub_scroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="70dp"
             android:orientation="horizontal">
+        </androidx.recyclerview.widget.RecyclerView>
 
-            <ImageView
-                android:id="@+id/qr_code"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:cropToPadding="false"
-                android:padding="@dimen/normal_margin"
-                android:src="@drawable/ic_qr_code" />
 
-            <ImageView
-                android:id="@+id/detect_object"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="@dimen/normal_margin"
-                android:src="@drawable/ic_detect_obj" />
-
-            <ImageView
-                android:id="@+id/image_filter"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="@dimen/normal_margin"
-                android:src="@drawable/ic_img_filter" />
-
-            <ImageView
-                android:id="@+id/meme_gen"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="@dimen/normal_margin"
-                android:src="@drawable/ic_meme" />
-
-            <ImageView
-                android:id="@+id/Futur_feature6"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="@dimen/normal_margin"
-                android:src="@drawable/ic_plus" />
-
-        </LinearLayout>
-    </HorizontalScrollView>
 
     <LinearLayout
         android:id="@+id/swipe"
         android:layout_width="450dp"
-        android:layout_height="200dp"
+        android:layout_height="325dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="100dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="186dp"
         android:layout_weight="1"
         android:gravity="clip_vertical|center_horizontal"
         android:orientation="horizontal"
