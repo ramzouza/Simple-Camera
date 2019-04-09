@@ -9,6 +9,7 @@ import com.simplemobiletools.commons.extensions.toast
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context.CLIPBOARD_SERVICE
+import android.util.Log
 
 
 class SmartHubDialog {
@@ -28,8 +29,12 @@ class SmartHubDialog {
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(urlLabel, DialogInterface.OnClickListener { dialog, id ->
+                    var navUrl = ""
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) navUrl = "http://" + url;
+                    else navUrl = url;
                     val openURL = Intent(Intent.ACTION_VIEW)
-                    openURL.data = Uri.parse(url)
+                    context.toast(navUrl);
+                    openURL.data = Uri.parse(navUrl)
                     context.startActivity(openURL)
                 })
                 .setNeutralButton(clipboardLabel, DialogInterface.OnClickListener { dialog, id ->

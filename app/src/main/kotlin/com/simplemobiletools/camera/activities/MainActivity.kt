@@ -446,9 +446,9 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
                         list.add(word)
                     }
                 }
-                toast(list.size.toString());
+                toast("Number of links detected: " + list.size.toString());
                 if (list.size > 0) SmartHubDialog(this@MainActivity).build("Hyperlinks Detected", "The following hyperlink was detected: " + list[0],"Visit Hyperlink",list[0],"Copy to Clipboard","hyperlink",list[0])
-                else toast("Unfortunately, no hyperlink was recognized in the text you scanned.")
+                else toast("Unfortunately, no hyperlink was recognized in the text you scanned. The following words were found: " + words.toString())
             })
         }
     }
