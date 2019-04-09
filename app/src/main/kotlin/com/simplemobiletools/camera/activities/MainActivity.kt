@@ -308,6 +308,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
 
         checkVideoCaptureIntent()
         mPreview = CameraPreview(this, camera_texture_view, mIsInPhotoMode)
+        TopMenu.bringToFront()
         view_holder.addView(mPreview as ViewGroup)
         checkImageCaptureIntent()
         mPreview?.setIsImageCaptureIntent(isImageCaptureIntent())
