@@ -13,6 +13,7 @@ import org.mockito.stubbing.Answer
 
 import org.mockito.Mockito.*
 import android.content.DialogInterface
+import android.util.Log
 import com.android.volley.RequestQueue
 import com.google.android.gms.vision.label.ImageLabel
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel
@@ -145,9 +146,12 @@ public class KtUnitTests() {
         val links : Array<String> = arrayOf(
                 "https://www.youtube.com/watch?v=HaRQaDjKShA",
                 "https://github.com/ramzouza/Simple-Camera/commit/dc3b8d800c6d37f3509de6153d644f4ce7955f1a",
-                "http://zetcode.com/kotlin/arrays/"
+                "http://zetcode.com/kotlin/arrays/",
+                "messenger.com",
+                "www.jon.com/so-And_so@1\\t"
         )
         for (link in links){
+            System.out.println(link);
             assert(isHyperlink(link))
         }
     }

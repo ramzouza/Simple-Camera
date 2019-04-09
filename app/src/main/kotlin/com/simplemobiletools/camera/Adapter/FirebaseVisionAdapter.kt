@@ -10,6 +10,7 @@ import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel
 import com.simplemobiletools.commons.extensions.getLatestMediaId
 import com.simplemobiletools.commons.extensions.toast
 import java.io.IOException
+import java.lang.Exception
 
 open class FirebaseVisionAdapter {
 
@@ -45,9 +46,14 @@ open class FirebaseVisionAdapter {
             image = FirebaseVisionImage.fromFilePath(context, file_uri)
             val detector = FirebaseVision.getInstance().getCloudDocumentTextRecognizer();
             detector.processImage(image).addOnSuccessListener { result ->
-                val resultText = result.text
-                Log.i("INFO", resultText);
-                handler(resultText);
+                try{
+                    val resultText = result.text
+                    Log.i("INFO1", resultText);
+                    handler(resultText);
+                } catch (e : Exception) {
+                    handler("");
+                }
+
             }
         } catch (e: IOException) {
             e.printStackTrace()

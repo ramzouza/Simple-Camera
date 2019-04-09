@@ -342,8 +342,8 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         settings.setOnClickListener { launchSettings() }
         toggle_photo_video.setOnClickListener { handleTogglePhotoVideo() }
         change_resolution.setOnClickListener { mPreview?.showChangeResolutionDialog() }
-     //   qr_code!!.setOnClickListener { qr_code() }
-       // detect_object.setOnClickListener {detect_object()}
+        //qr_code!!.setOnClickListener { qr_code() }
+        //detect_object.setOnClickListener {detect_object()}
         //image_filter.setOnClickListener { startFilter("Filter") }
         //meme_gen.setOnClickListener { startFilter("memeGen") }
 
@@ -429,9 +429,11 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     public fun scan_hyperlink() {
         mIsInPhotoMode = true;
         this.handleShutter();
-        Timer().schedule(1500) {
+        toast("Taking image...");
+        Timer().schedule(1000) {
             val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI // external URI
             val lastMediaId = this@MainActivity.getLatestMediaId(uri) // get latest image ID
+            toast("Image Id: " + lastMediaId.toString());
             val file_uri = Uri.withAppendedPath(uri, lastMediaId.toString()) // get file uri
 
             val firebaseVisionAdapter = FirebaseVisionAdapter(this@MainActivity) // set up firebase detect object
@@ -457,12 +459,12 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
      fun detect_object(){
         mIsInPhotoMode = true;
         this.handleShutter();
-
+        toast("Taking image...");
         Timer().schedule(1500) {
             val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI // external URI
             val lastMediaId = this@MainActivity.getLatestMediaId(uri) // get latest image ID
+            toast("Image Id: " + lastMediaId.toString());
             val file_uri = Uri.withAppendedPath(uri, lastMediaId.toString()) // get file uri
-
             val firebaseVisionAdapter = FirebaseVisionAdapter(this@MainActivity) // set up firebase detect object
             val knowledgeGraph = KnowledgeGraphAdapter(this@MainActivity); // set up knowledge graph object
             val dialog = SmartHubDialog(this@MainActivity) // setup the smart hub dialog
