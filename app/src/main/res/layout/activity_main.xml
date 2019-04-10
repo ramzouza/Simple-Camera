@@ -109,11 +109,11 @@
     <LinearLayout
         android:id="@+id/swipe"
         android:layout_width="450dp"
-        android:layout_height="550dp"
+        android:layout_height="500dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="0dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="171dp"
         android:layout_weight="1"
         android:gravity="clip_vertical|center_horizontal"
         android:orientation="horizontal"
