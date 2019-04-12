@@ -1,65 +1,41 @@
-import requests
-import pprint
-import json
-import flask 
-from config import token
-dump = pprint.PrettyPrinter(indent=4).pprint
-def file_dump(obj):
-    with open('data.json', 'w') as outfile:
-        json.dump(obj, outfile)
-
-
-def travy_get(url):
-    headers = {
-    "Travis-API-Version": "3",
-    "User-Agent" : "User-Agent: API Explorer",
-    "Authorization": "token " + token
-    }
-    base = "https://api.travis-ci.com"
-    request_url = base+url
-    dump(request_url)
-    return requests.get(request_url, headers=headers).json()
-
-latest = True
-
-if latest == True:
-    url = "/repo/7494371/builds?limit=1"
-    build = travy_get(url)['builds'][0]
-
-else:
-    # ref to failing build
-    url = "/build/105866560"
-    build = travy_get(url)
-
-
-dump(build)
-stages = build['stages']
-jobs = build['jobs']
-logs = {}
-for job in jobs:
-    full_job = travy_get(job['@href'])
-    stage = full_job['stage']
-    if stage['state'] == "failed":
-        log = travy_get(job['@href']+"/log")['content']
-        logs[stage['name']] = log
-    elif stage['state'] == "canceled":
-        log = {"@type":'error', "error_message":"Stage cancelled so job was not run"}
-        logs[stage['name']] = log
-
 
 from flask import Flask
 from flask import jsonify
 app = Flask(__name__)
 
+from travy import file_dump, analyse_build, latest_build, travy_get, dump, get_build
+
+
 @app.route('/')
 def main():
-    return jsonify(build)
+    
+    return '''
+    <html>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <body>
+    <a style="margin: 1em;" class="btn btn-success" href="/api/build/latest">Latest Build</a><br>
+    <a style="margin: 1em;" class="btn btn-danger" href="/api/build/107300346">Build: 107300346</a><br>
+    <a style="margin: 1em;" class="btn btn-danger" href="/api/build/105784318">Build: 105784318</a><br>
+    </body>
+    </html>
+    '''
+
+@app.route('/api/build/')
+@app.route('/api/build/<buildNo>')
+def build(buildNo="latest"):
+    if buildNo == "latest":
+        build = latest_build()
+    else:
+        build = get_build(buildNo)
+    logs = analyse_build(build)
+    return jsonify(logs)
+
+
 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5003, debug=True)
 
-file_dump(logs)
 
 
 
