@@ -81,21 +81,75 @@ class MainActivityTest {
 
     @Test
     fun imageFiltersTest() {
-        onView(withId(R.id.advanced_camera)).check(matches(isDisplayed()))
 
-        //click on the smarthub button
-        onView(withId(R.id.advanced_camera)).perform(click())
+        val appCompatImageView = onView(
+                allOf(withId(R.id.advanced_camera),
+                        childAtPosition(
+                                allOf(withId(R.id.TopMenu),
+                                        childAtPosition(
+                                                withId(R.id.view_holder),
+                                                6)),
+                                3),
+                        isDisplayed()))
+        appCompatImageView.perform(click())
 
-        onView(withId(R.id.smart_hub_scroll)).check(matches(isDisplayed()))
         onView(withId(R.id.smart_hub_scroll)).perform(swipeLeft())
 
+
         Thread.sleep(1500)
-        //click on the image filter button
+
         onView(withId(R.id.smart_hub_scroll)).perform(click())
 
-        //check that save and back buttons are displayed
-        onView(withId(R.id.tabs)).check(matches(isDisplayed()))
-        onView(withId(R.id.tabsExit)).check(matches(isDisplayed()))
+
+        val cardView = onView(
+                allOf(withId(R.id.btn_filters),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(`is`("android.widget.HorizontalScrollView")),
+                                        0),
+                                0)))
+        cardView.perform(scrollTo(), click())
+
+        val appCompatImageView2 = onView(
+                allOf(withId(R.id.thumbnail),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.recycler_view),
+                                        2),
+                                1),
+                        isDisplayed()))
+        appCompatImageView2.perform(click())
+
+        val view = onView(
+                allOf(withId(R.id.touch_outside),
+                        childAtPosition(
+                                allOf(withId(R.id.coordinator),
+                                        childAtPosition(
+                                                withId(R.id.container),
+                                                0)),
+                                0),
+                        isDisplayed()))
+        view.perform(click())
+
+        val cardView2 = onView(
+                allOf(withId(R.id.tabs),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.coordinator),
+                                        0),
+                                3),
+                        isDisplayed()))
+        cardView2.perform(click())
+
+
+
+
+        onView(withText("Save")).perform(click())
+
+        //Image saved Succesfully in the gallery with the Text
+        onView(withText("Image saved to gallery")).check(matches(isDisplayed()))
+
+
 
     }
 
@@ -109,7 +163,6 @@ class MainActivityTest {
         onView(withId(R.id.smart_hub_scroll)).perform(swipeLeft())
         onView(withId(R.id.smart_hub_scroll)).perform(swipeLeft())
 
-        Thread.sleep(1500)
         //click on the image filter button
         onView(withId(R.id.smart_hub_scroll)).perform(click())
 
