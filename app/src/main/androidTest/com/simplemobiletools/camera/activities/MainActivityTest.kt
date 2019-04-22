@@ -54,26 +54,9 @@ class MainActivityTest {
         onView(withId(R.id.advanced_camera)).perform(click())
 
 
-        // Once the button advance camera is click, the smart hub appear with 4 buttons displayed
-        onView(withId(R.id.qr_code)).check(matches(isDisplayed()))
-        onView(withId(R.id.detect_object)).check(matches(isDisplayed()))
-        onView(withId(R.id.image_filter)).check(matches(isDisplayed()))
+        // Once in the smart hub mode, the container that contains all the options appears
+        onView(withId(R.id.smart_hub_scroll)).check(matches(isDisplayed()))
 
-    }
-
-    @Test
-    fun detectObjectTest(){
-        onView(withId(R.id.advanced_camera)).check(matches(isDisplayed()))
-
-        //click on the button
-        onView(withId(R.id.advanced_camera)).perform(click())
-
-
-        // Once the button advance camera is click, the smart hub appear with 4 buttons displayed
-        onView(withId(R.id.detect_object)).check(matches(isDisplayed()))
-
-        // Once button is clicked check thats it clicked idk
-        onView(withId(R.id.detect_object)).perform(click())
 
     }
 
@@ -84,9 +67,8 @@ class MainActivityTest {
         //click on the button
         onView(withId(R.id.advanced_camera)).perform(click())
 
-        onView(withId(R.id.qr_code)).check(matches(isDisplayed()))
-
-    }
+        onView(withId(R.id.smart_hub_scroll)).perform(click())
+}
 
     @Test
     fun imageFiltersTest() {
@@ -95,17 +77,39 @@ class MainActivityTest {
         //click on the smarthub button
         onView(withId(R.id.advanced_camera)).perform(click())
 
-        onView(withId(R.id.image_filter)).check(matches(isDisplayed()))
+        onView(withId(R.id.smart_hub_scroll)).check(matches(isDisplayed()))
+        onView(withId(R.id.smart_hub_scroll)).perform(swipeLeft())
 
+        Thread.sleep(1500)
         //click on the image filter button
-        onView(withId(R.id.image_filter)).perform(click())
+        onView(withId(R.id.smart_hub_scroll)).perform(click())
 
         //check that save and back buttons are displayed
         onView(withId(R.id.tabs)).check(matches(isDisplayed()))
-
         onView(withId(R.id.tabsExit)).check(matches(isDisplayed()))
 
     }
+
+
+    @Test
+    fun detectObjectTest(){
+        onView(withId(R.id.advanced_camera)).check(matches(isDisplayed()))
+
+        //click on the button
+        onView(withId(R.id.advanced_camera)).perform(click())
+        onView(withId(R.id.smart_hub_scroll)).perform(swipeLeft())
+        onView(withId(R.id.smart_hub_scroll)).perform(swipeLeft())
+
+        Thread.sleep(1500)
+        //click on the image filter button
+        onView(withId(R.id.smart_hub_scroll)).perform(click())
+
+
+
+    }
+
+
+
 
 
 }
