@@ -71,10 +71,18 @@ class MainActivityTest {
 
     @Test
     fun qrCodeTest(){
-        onView(withId(R.id.advanced_camera)).check(matches(isDisplayed()))
 
-        //click on the button
-        onView(withId(R.id.advanced_camera)).perform(click())
+        val appCompatImageView = onView(
+                allOf(withId(R.id.advanced_camera),
+                        childAtPosition(
+                                allOf(withId(R.id.TopMenu),
+                                        childAtPosition(
+                                                withId(R.id.view_holder),
+                                                6)),
+                                3),
+                        isDisplayed()))
+
+        appCompatImageView.perform(click())
 
         onView(withId(R.id.smart_hub_scroll)).perform(click())
 }
