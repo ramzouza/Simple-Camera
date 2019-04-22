@@ -105,6 +105,23 @@ class MainActivityTest {
         onView(withId(R.id.smart_hub_scroll)).perform(click())
 
 
+    }
+
+    @Test
+    fun hyperlinkTest(){
+
+        onView(withId(R.id.advanced_camera)).check(matches(isDisplayed()))
+
+        //click on the button
+        onView(withId(R.id.advanced_camera)).perform(click())
+        onView(withId(R.id.smart_hub_scroll)).perform(swipeLeft())
+        onView(withId(R.id.smart_hub_scroll)).perform(swipeLeft())
+        onView(withId(R.id.smart_hub_scroll)).perform(swipeLeft())
+        onView(withId(R.id.smart_hub_scroll)).perform(swipeLeft())
+
+        Thread.sleep(1500)
+        //click on the image filter button
+        onView(withId(R.id.smart_hub_scroll)).perform(click())
 
     }
 
