@@ -1,8 +1,6 @@
 package com.simplemobiletools.camera.activities
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.DialogInterface
 import android.content.Intent
 import android.hardware.SensorManager
 import android.net.Uri
@@ -12,17 +10,16 @@ import android.provider.MediaStore
 import android.view.*
 import android.graphics.Bitmap
 
-import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.media.Image
+import android.graphics.Typeface
 //import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.os.Vibrator
-import android.text.Html
 import android.text.TextUtils
 import android.util.Log
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -36,7 +33,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.simplemobiletools.camera.Adapter.ViewConnection
 import com.simplemobiletools.camera.BuildConfig
-import com.simplemobiletools.camera.R
+
 import com.simplemobiletools.camera.Utils.BitmapTools
 import com.simplemobiletools.camera.Utils.NonSwipeableViewPager
 import com.simplemobiletools.camera.extensions.config
@@ -49,30 +46,38 @@ import com.simplemobiletools.camera.views.FocusCircleView
 import com.simplemobiletools.commons.extensions.*
 import com.simplemobiletools.commons.helpers.*
 import com.simplemobiletools.commons.models.Release
-import android.view.MenuItem
-import androidx.appcompat.widget.Toolbar
-import com.google.android.material.tabs.TabLayout
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel
+import androidx.recyclerview.widget.*
 import com.simplemobiletools.camera.Adapter.KnowledgeGraphAdapter
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.dialog_change_resolution.view.*
 import com.simplemobiletools.camera.interfaces.FilterListInterface
 import com.zomato.photofilters.imageprocessors.Filter
 import kotlinx.android.synthetic.main.filter_content.*
 import kotlinx.android.synthetic.main.filter_main.*
+import kotlinx.android.synthetic.main.features.*
 import java.util.*
-import java.io.IOException
 import kotlin.concurrent.schedule
-import com.android.volley.Response
+import com.google.firebase.perf.metrics.AddTrace
 import com.simplemobiletools.camera.Adapter.FirebaseVisionAdapter
+import com.simplemobiletools.camera.Adapter.PostsAdapter
+import com.simplemobiletools.camera.R
+import com.simplemobiletools.camera.Utils.isHyperlink
+import com.simplemobiletools.camera.debug.TextFragment
 import com.simplemobiletools.camera.dialogs.SmartHubDialog
 import org.json.JSONObject
 import com.simplemobiletools.camera.extensions.OnSwipeTouchListener
+import com.simplemobiletools.camera.models.ModelRecyclerView
+import kotlin.collections.ArrayList
+import com.simplemobiletools.camera.extensions.DoubleTapListener
+import com.simplemobiletools.camera.interfaces.AddTextFragmentListener
+import ja.burhanrashid52.photoeditor.OnSaveBitmap
+import ja.burhanrashid52.photoeditor.PhotoEditor
+import kotlinx.android.synthetic.main.fragment_add_text.*
 
 
-open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface {
+open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, FilterListInterface, AddTextFragmentListener {
+    override fun onAddTextListener(typeFace:Typeface,text: String, color: Int) {
+        photoEditor.addText(typeFace,text,color)
+    }
 
     val GALLERY_PERMISSION = 1000
 
@@ -88,8 +93,12 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     internal var originalImage:Bitmap?=null
     internal lateinit var filteredImage:Bitmap
     internal lateinit var finalImage:Bitmap
-
     internal lateinit var filteredList: FilterList
+    internal lateinit var textFragment: TextFragment
+    internal lateinit var photoEditor : PhotoEditor
+    internal lateinit var addTextFragment: AddTextFragment
+
+
 
     private var filterMenu: Menu? = null
 
@@ -111,6 +120,11 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     var mLastHandledOrientation = 0
     private var lensMode = false
 
+
+
+    var adapter:PostsAdapter?=null
+    val features : ArrayList<ModelRecyclerView> = ArrayList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
@@ -127,6 +141,26 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         supportActionBar?.hide()
         checkWhatsNewDialog()
         setupOrientationEventListener()
+
+
+
+        var name_list = arrayOf("QR Code ","Photo Filters","Detect Object","Meme Generator" , "Hyperlink Scanner")
+        var image_list = arrayOf(R.drawable.ic_qr_code,R.drawable.ic_img_filter,R.drawable.ic_detect_obj,R.drawable.ic_meme, R.drawable.ic_arrow_right)
+
+
+        for(i in 0..name_list.size-1){
+            features.add(ModelRecyclerView(name_list[i],image_list[i]))
+        }
+
+
+        smart_hub_scroll.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false)
+        smart_hub_scroll.adapter = PostsAdapter(features,this)
+
+
+        val snapHelper : SnapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(smart_hub_scroll)
+
+
     }
 
     override fun onResume() {
@@ -190,6 +224,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         mCurrVideoRecTimer = 0
         mLastHandledOrientation = 0
         mCameraImpl = MyCameraImpl(applicationContext)
+        textFragment = TextFragment.getInstance()
 
 
         if (config.alwaysOpenBackCamera) {
@@ -264,6 +299,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         }
     }
 
+    @AddTrace(name = "initCameraTrace", enabled = true /* optional */)
     private fun initializeCamera() {
         setContentView(R.layout.activity_main)
         initButtons()
@@ -272,6 +308,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
 
         checkVideoCaptureIntent()
         mPreview = CameraPreview(this, camera_texture_view, mIsInPhotoMode)
+        TopMenu.bringToFront()
         view_holder.addView(mPreview as ViewGroup)
         checkImageCaptureIntent()
         mPreview?.setIsImageCaptureIntent(isImageCaptureIntent())
@@ -294,6 +331,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         fadeAnim(smart_hub_scroll, .0f)
     }
 
+    @AddTrace(name = "initButtonsTrace", enabled = true /* optional */)
     private fun initButtons() {
 
         toggle_camera.setOnClickListener { toggleCamera() }
@@ -305,9 +343,11 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         settings.setOnClickListener { launchSettings() }
         toggle_photo_video.setOnClickListener { handleTogglePhotoVideo() }
         change_resolution.setOnClickListener { mPreview?.showChangeResolutionDialog() }
-        qr_code!!.setOnClickListener { qr_code() }
-        detect_object.setOnClickListener {detect_object()}
-        image_filter.setOnClickListener { startFilter() }
+        //qr_code!!.setOnClickListener { qr_code() }
+        //detect_object.setOnClickListener {detect_object()}
+        //image_filter.setOnClickListener { startFilter("Filter") }
+        //meme_gen.setOnClickListener { startFilter("memeGen") }
+
 
         swipe.setOnTouchListener(object : OnSwipeTouchListener(applicationContext) {
 
@@ -329,8 +369,13 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
             }
         })
 
+        doubleTap.setOnTouchListener(object : DoubleTapListener(applicationContext) {
 
-
+            override fun onDoubleTap() {
+                // toast("I just flipped the switch")
+                toggleCamera()
+            }
+        })
 
     }
 
@@ -343,7 +388,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     private fun toggleLens() {
 
         //this.toast("Advanced Mode")
-        findViewById<HorizontalScrollView>(R.id.smart_hub_scroll).setVisibility(View.VISIBLE);
+        findViewById<RecyclerView>(R.id.smart_hub_scroll).setVisibility(View.VISIBLE);
 
         findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.GONE);
 
@@ -358,6 +403,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         if (this.lensMode){ // We're in lens mode now
             fadeAnim(btn_holder, .0f)
             fadeAnim(smart_hub_scroll, 1f)
+            findViewById<RecyclerView>(R.id.smart_hub_scroll).setVisibility(View.VISIBLE);
             // make bottom bar go away
             // make advanced hub appear
 
@@ -365,6 +411,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
             fadeAnim(btn_holder, 1f)
             fadeAnim(smart_hub_scroll, .0f)
             findViewById<LinearLayout>(R.id.btn_holder).setVisibility(View.VISIBLE);
+            findViewById<RecyclerView>(R.id.smart_hub_scroll).setVisibility(View.GONE);
             // make advanced hub appear
             // make bottom bar appear
 
@@ -373,20 +420,52 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
 
     }
 
-    private fun qr_code(){
+    @AddTrace(name = "qrCodeTrace", enabled = true /* optional */)
+     fun qr_code(){
         val intent = Intent(applicationContext, ScanActivity::class.java)
         startActivity(intent)
     }
 
-    private fun detect_object(){
+    @AddTrace(name = "hyperlinkScannerTrace", enabled = true /* optional */)
+    public fun scan_hyperlink() {
         mIsInPhotoMode = true;
         this.handleShutter();
+        toast("Taking image...");
+        Timer().schedule(1000) {
+            val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI // external URI
+            val lastMediaId = this@MainActivity.getLatestMediaId(uri) // get latest image ID
+            toast("Image Id: " + lastMediaId.toString());
+            val file_uri = Uri.withAppendedPath(uri, lastMediaId.toString()) // get file uri
 
+            val firebaseVisionAdapter = FirebaseVisionAdapter(this@MainActivity) // set up firebase detect object
+            firebaseVisionAdapter.visionText(file_uri, fun (result: String) {
+                val words = result.split(" ","\n");
+                val list : ArrayList<String> = ArrayList<String>();
+                for (word in words){
+                    if (isHyperlink(word)){
+                        toast(word)
+                        list.add(word)
+                    }
+                }
+                toast("Number of links detected: " + list.size.toString());
+                if (list.size > 0) SmartHubDialog(this@MainActivity).build("Hyperlinks Detected", "The following hyperlink was detected: " + list[0],"Visit Hyperlink",list[0],"Copy to Clipboard","hyperlink",list[0])
+                else toast("Unfortunately, no hyperlink was recognized in the text you scanned. The following words were found: " + words.toString())
+            })
+        }
+    }
+
+
+
+    @AddTrace(name = "detectObjectTrace", enabled = true /* optional */)
+     fun detect_object(){
+        mIsInPhotoMode = true;
+        this.handleShutter();
+        toast("Taking image...");
         Timer().schedule(1500) {
             val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI // external URI
             val lastMediaId = this@MainActivity.getLatestMediaId(uri) // get latest image ID
+            toast("Image Id: " + lastMediaId.toString());
             val file_uri = Uri.withAppendedPath(uri, lastMediaId.toString()) // get file uri
-
             val firebaseVisionAdapter = FirebaseVisionAdapter(this@MainActivity) // set up firebase detect object
             val knowledgeGraph = KnowledgeGraphAdapter(this@MainActivity); // set up knowledge graph object
             val dialog = SmartHubDialog(this@MainActivity) // setup the smart hub dialog
@@ -417,9 +496,15 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
             }
 
             // detect the object
-            firebaseVisionAdapter.vision(file_uri, visionHandler)
+            firebaseVisionAdapter.visionLabel(file_uri, visionHandler)
         }
     }
+
+    // Method to be implemented for the meme generator lens
+    // @AddTrace(name = "memeGeneratorTrace", enabled = true /* optional */)
+
+
+
 
     private fun getLastMediaPath() : String {
         if (mPreviewUri != null) {
@@ -604,7 +689,8 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         fadeAnim(settings, .5f)
         fadeAnim(toggle_photo_video, .0f)
         fadeAnim(change_resolution, .0f)
-        fadeAnim(last_photo_video_preview, .0f)
+       //fadeAnim(last_photo_video_preview, .0f)
+        fadeAnim(toggle_flash, .0f)
         fadeAnim(advanced_camera, .0f)
     }
 
@@ -612,7 +698,8 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
         fadeAnim(settings, 1f)
         fadeAnim(toggle_photo_video, 1f)
         fadeAnim(change_resolution, 1f)
-        fadeAnim(last_photo_video_preview, 1f)
+        //fadeAnim(last_photo_video_preview, 1f)
+        fadeAnim(toggle_flash, 1f)
         fadeAnim(advanced_camera, 1f)
         scheduleFadeOut()
     }
@@ -777,15 +864,43 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
     }
 
     //Filter section
-    private fun startFilter(){
+    @AddTrace(name = "filterTrace", enabled = true /* optional */)
+     fun startFilter(type:String){
         video_rec_curr_timer.beGone()
-        Log.d("YANISTEST","TEAST THIS")
         setContentView(R.layout.filter_main)
-        Log.d("YANISTEST2","TEAST THIS")
+        photoEditor = PhotoEditor.Builder(this@MainActivity,image_preview).setPinchTextScalable(true).build()
         loadImage()
-        Log.d("YANISTEST3","TEAST THIS")
-        setupViewPager(viewPager)
-        Log.d("YANISTES4","TEAST THIS")
+
+        //Put all Button to Gone
+        findViewById<CardView>(R.id.btn_filters).setVisibility(View.GONE)
+        findViewById<CardView>(R.id.btn_text).setVisibility(View.GONE)
+        if(type == "Filter"){
+            findViewById<CardView>(R.id.btn_filters).setVisibility(View.VISIBLE)
+            filteredList = FilterList.getInstance()
+            btn_filters.setOnClickListener {
+                if(filteredList != null){
+                    filteredList.setListener(this@MainActivity)
+                    filteredList.show(supportFragmentManager,filteredList.tag)
+                }
+            }
+        }
+        if(type == "memeGen"){
+            findViewById<CardView>(R.id.btn_text).setVisibility(View.VISIBLE)
+            addTextFragment = AddTextFragment.getInstance()
+
+
+            btn_text.setOnClickListener{
+                if(addTextFragment != null){
+                    addTextFragment.setListener(this@MainActivity)
+                    addTextFragment.show(supportFragmentManager,addTextFragment.tag)
+                }
+            }
+        }
+
+
+
+
+
     }
 
     private fun setupViewPager(viewPager: NonSwipeableViewPager?) {
@@ -814,7 +929,7 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
 
 
 
-        image_preview.setImageBitmap(originalImage)
+        image_preview.source.setImageBitmap(originalImage)
         image_preview.setRotation(90F)
         tabs.setOnClickListener{saveImageToGallery()}
         tabsExit.setOnClickListener({startActivity(Intent(this, MainActivity::class.java))})
@@ -842,18 +957,36 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
                 .withListener(object: MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         if(report!!.areAllPermissionsGranted()){
-                            val path = BitmapTools.insertImage(contentResolver,rotatedBitmap,
-                                    System.currentTimeMillis().toString()+"_profile.jpg","")
 
-                            if(!TextUtils.isEmpty(path)){
+                            photoEditor.saveAsBitmap(object :OnSaveBitmap{
+                                override fun onFailure(e: java.lang.Exception?) {
+                                    val snackBar = Snackbar.make(coordinator,e!!.message.toString(),Snackbar.LENGTH_LONG)
+                                    snackBar.show()
+                                }
 
-                                val snackBar = Snackbar.make(coordinator,"Image saved to gallery",Snackbar.LENGTH_LONG)
+                                override fun onBitmapReady(saveBitmap: Bitmap?) {
 
-                                snackBar.show()
-                            }
-                            else{
-                                val snackBar = Snackbar.make(coordinator,"Unable to save image",Snackbar.LENGTH_LONG)
-                            }
+                                    val scaledBitmap = Bitmap.createScaledBitmap(saveBitmap, saveBitmap!!.width, saveBitmap!!.height, true)
+
+                                    val rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.width, scaledBitmap.height, matrix, true)
+
+                                    val path = BitmapTools.insertImage(contentResolver,rotatedBitmap,
+                                            System.currentTimeMillis().toString()+"_profile.jpg","")
+
+                                    if(!TextUtils.isEmpty(path)){
+
+                                        val snackBar = Snackbar.make(coordinator,"Image saved to gallery",Snackbar.LENGTH_LONG)
+
+                                        snackBar.show()
+                                    }
+                                    else{
+                                        val snackBar = Snackbar.make(coordinator,"Unable to save image",Snackbar.LENGTH_LONG)
+                                    }
+                                }
+
+                            })
+
+
                         }
                         else
                             Toast.makeText(applicationContext,"Permission denied", Toast.LENGTH_SHORT).show()
@@ -885,13 +1018,13 @@ open class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener, F
             bitmap.recycle()
 
             filteredList.displayImage(bitmap,data!!.data!!)
-            image_preview.setImageBitmap(filteredImage)
+            image_preview.source.setImageBitmap(filteredImage)
         }
     }
 
     override fun onFilterSelected(filter: Filter) {
         filteredImage = originalImage!!.copy(Bitmap.Config.ARGB_8888,true)
-        image_preview.setImageBitmap(filter.processFilter(filteredImage))
+        image_preview.source.setImageBitmap(filter.processFilter(filteredImage))
         finalImage = filteredImage.copy(Bitmap.Config.ARGB_8888,true)
     }
 
